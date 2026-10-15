@@ -8,7 +8,7 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Google Fonts: Inter & Courier Prime (Standar Naskah Film) -->
+  <!-- Google Fonts: Inter & Courier Prime -->
   <link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -24,24 +24,24 @@
     }
     /* White Apple Liquid Glassmorphism */
     .liquid-glass {
-      background: rgba(255, 255, 255, 0.72);
+      background: rgba(255, 255, 255, 0.76);
       backdrop-filter: blur(24px) saturate(190%);
       -webkit-backdrop-filter: blur(24px) saturate(190%);
-      border: 1px solid rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.9);
       box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), inset 0 1px 0 0 rgba(255, 255, 255, 0.95);
     }
     .liquid-glass-subtle {
-      background: rgba(255, 255, 255, 0.55);
+      background: rgba(255, 255, 255, 0.6);
       backdrop-filter: blur(16px) saturate(180%);
       -webkit-backdrop-filter: blur(16px) saturate(180%);
-      border: 1px solid rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.75);
     }
     .liquid-pill {
-      background: rgba(255, 255, 255, 0.85);
+      background: rgba(255, 255, 255, 0.88);
       backdrop-filter: blur(20px);
       border: 1px solid rgba(226, 232, 240, 0.9);
       box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04), inset 0 1px 0 rgba(255, 255, 255, 1);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.18s cubic-bezier(0.16, 1, 0.3, 1);
     }
     .liquid-pill:hover {
       transform: translateY(-1px);
@@ -54,62 +54,135 @@
       min-height: 1056px;
       background: #ffffff;
       box-shadow: 0 20px 50px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.04);
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      padding: 72px 72px 72px 96px;
+      border: 1px solid rgba(226, 232, 240, 0.85);
+      padding: 72px 72px 96px 96px;
       font-size: 12pt;
-      line-height: 1.25;
+      line-height: 1.3;
       color: #111827;
-    }
-    .script-block {
-      outline: none;
       position: relative;
-      transition: background 0.15s ease;
-      border-radius: 4px;
+      cursor: text;
     }
-    .script-block:focus {
-      background: rgba(59, 130, 246, 0.05);
+    .script-line-wrapper {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
     }
-    /* Format Elemen Skenario */
-    .type-scene {
+    .script-line {
+      outline: none;
+      width: 100%;
+      min-height: 1.3em;
+      white-space: pre-wrap;
+      word-break: break-word;
+      border-radius: 3px;
+      padding: 1px 4px;
+      transition: background 0.12s ease;
+    }
+    .script-line:focus {
+      background: rgba(59, 130, 246, 0.04);
+    }
+    .script-line:empty::before {
+      content: attr(data-placeholder);
+      color: #cbd5e1;
+      pointer-events: none;
+      font-weight: 400;
+    }
+    /* Indikator Tipe Baris di Sebelah Kiri Kertas saat Aktif */
+    .line-type-badge {
+      position: absolute;
+      left: -76px;
+      top: 2px;
+      font-family: var(--font-ui);
+      font-size: 9px;
       font-weight: 700;
       text-transform: uppercase;
-      margin-top: 24px;
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
+      letter-spacing: 0.04em;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #f1f5f9;
+      color: #64748b;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+      user-select: none;
     }
-    .type-action {
-      margin-bottom: 12px;
+    .script-line-wrapper:focus-within .line-type-badge {
+      opacity: 1;
+      background: #eff6ff;
+      color: #2563eb;
     }
-    .type-insert {
+
+    /* Format Elemen Skenario */
+    .wrapper-scene {
+      margin-top: 22px;
+      margin-bottom: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .wrapper-scene .scene-num-left {
+      font-weight: 700;
+      width: 32px;
+      margin-left: -32px;
+      user-select: none;
+      color: #334155;
+    }
+    .wrapper-scene .scene-num-right {
+      font-weight: 700;
+      width: 36px;
+      text-align: right;
+      margin-right: -36px;
+      user-select: none;
+      color: #334155;
+    }
+    .wrapper-action {
+      margin-bottom: 10px;
+    }
+    .wrapper-insert {
       font-weight: 700;
       text-transform: uppercase;
       margin-top: 14px;
       margin-bottom: 10px;
     }
-    .type-character {
+    .wrapper-character {
       font-weight: 700;
       text-transform: uppercase;
-      margin-top: 16px;
-      margin-left: 210px;
+      margin-top: 14px;
+      padding-left: 210px;
       margin-bottom: 2px;
     }
-    .type-parenthetical {
-      margin-left: 160px;
+    .wrapper-parenthetical {
+      padding-left: 160px;
+      padding-right: 140px;
       margin-bottom: 2px;
+      font-style: italic;
     }
-    .type-dialogue {
-      margin-left: 110px;
-      margin-right: 120px;
-      margin-bottom: 12px;
+    .wrapper-dialogue {
+      padding-left: 110px;
+      padding-right: 120px;
+      margin-bottom: 10px;
     }
-    .type-transition {
+    .wrapper-transition {
       font-weight: 700;
       text-transform: uppercase;
       text-align: right;
-      margin-top: 16px;
-      margin-bottom: 16px;
+      margin-top: 14px;
+      margin-bottom: 14px;
     }
+
+    /* Pop-up Autocomplete StudioBinder Style */
+    #autocomplete-popup {
+      position: fixed;
+      z-index: 100;
+      min-width: 240px;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(20px) saturate(190%);
+      -webkit-backdrop-filter: blur(20px) saturate(190%);
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      box-shadow: 0 14px 34px rgba(15, 23, 42, 0.14), inset 0 1px 0 #fff;
+      border-radius: 12px;
+      padding: 5px;
+      font-family: var(--font-ui);
+    }
+
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.4); border-radius: 9999px; }
@@ -119,29 +192,37 @@
       body { background: white; overflow: visible; height: auto; }
       .no-print { display: none !important; }
       .screenplay-page { box-shadow: none; border: none; margin: 0; width: 100%; }
+      .line-type-badge { display: none !important; }
     }
   </style>
 </head>
 <body class="flex select-none">
 
-  <!-- LEFT NAVIGATION RAIL (Apple Liquid Glass) -->
+  <!-- AUTOCOMPLETE POPUP (Int/Ext, Locations, Time of Day, Characters) -->
+  <div id="autocomplete-popup" class="hidden no-print">
+    <div id="autocomplete-header" class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100">
+      Saran Otomatis (Enter / Tab)
+    </div>
+    <div id="autocomplete-items" class="mt-1 max-h-52 overflow-y-auto space-y-0.5"></div>
+  </div>
+
+  <!-- LEFT NAVIGATION RAIL -->
   <aside class="no-print w-16 h-full liquid-glass flex flex-col items-center py-4 z-30 justify-between border-r border-white/80">
     <div class="flex flex-col items-center gap-5">
-      <!-- Brand Icon -->
       <button onclick="switchView('landing')" class="w-10 h-10 rounded-2xl bg-gradient-to-br from-rose-500 to-pink-600 text-white flex items-center justify-center shadow-md shadow-rose-500/25 hover:scale-105 transition" title="Mourise Studio Home">
         <i data-lucide="clapperboard" class="w-5 h-5"></i>
       </button>
 
       <nav class="flex flex-col gap-3 mt-2">
-        <button onclick="switchView('landing')" id="nav-home" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">
+        <button onclick="switchView('landing')" id="nav-home" class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">
           <i data-lucide="home" class="w-4 h-4"></i>
           <span class="text-[10px] font-medium">Home</span>
         </button>
-        <button onclick="switchView('landing')" id="nav-projects" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">
+        <button onclick="switchView('landing')" id="nav-projects" class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">
           <i data-lucide="folder-kanban" class="w-4 h-4"></i>
           <span class="text-[10px] font-medium">Projects</span>
         </button>
-        <button onclick="switchView('editor')" id="nav-editor" class="nav-btn flex flex-col items-center gap-1 p-2 rounded-xl text-blue-600 bg-white shadow-sm transition">
+        <button onclick="switchView('editor')" id="nav-editor" class="flex flex-col items-center gap-1 p-2 rounded-xl text-blue-600 bg-white shadow-sm transition">
           <i data-lucide="file-text" class="w-4 h-4"></i>
           <span class="text-[10px] font-semibold">Script</span>
         </button>
@@ -161,5 +242,1254 @@
   <!-- MAIN CONTAINER -->
   <div class="flex-1 flex flex-col h-full overflow-hidden">
 
-    <!-- TOP HEADER BAR (Persis StudioBinder + Liquid Glass) -->
-    <header class="no-print h-13 liquid-glass px-5 py-2.5 flex items-center justify-between border
+    <!-- TOP HEADER BAR -->
+    <header class="no-print h-13 liquid-glass px-5 py-2.5 flex items-center justify-between border-b border-white/80 z-20">
+      <div class="flex items-center gap-3">
+        <div class="liquid-pill px-2.5 py-1 rounded-lg flex items-center gap-1.5 text-xs font-semibold text-blue-600 cursor-pointer" onclick="addNewRevision()">
+          <span id="active-rev-badge">v1</span>
+          <i data-lucide="chevron-down" class="w-3.5 h-3.5"></i>
+        </div>
+
+        <button onclick="switchView('landing')" class="liquid-pill px-3 py-1 rounded-lg flex items-center gap-2 text-xs font-semibold text-slate-800">
+          <i data-lucide="briefcase" class="w-3.5 h-3.5 text-slate-600"></i>
+          <span>Mourise Studio</span>
+          <span class="text-slate-300">/</span>
+          <span id="header-project-name" class="text-blue-600">MV - NERDOS BAND</span>
+        </button>
+
+        <div class="hidden md:flex items-center gap-1 ml-3 bg-slate-200/50 p-1 rounded-xl border border-white/80">
+          <button onclick="switchView('editor')" class="px-3 py-1 rounded-lg text-xs font-semibold bg-white text-slate-900 shadow-sm flex items-center gap-1.5">
+            <i data-lucide="pen-tool" class="w-3.5 h-3.5 text-blue-600"></i> Write
+          </button>
+          <button onclick="showToast('Mode Breakdown: Menandai properti & talent per scene')" class="px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-white/60 flex items-center gap-1.5 transition">
+            <i data-lucide="tags" class="w-3.5 h-3.5"></i> Breakdown
+          </button>
+          <button onclick="showToast('Mode Visualize: Storyboard & Shotlist')" class="px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-white/60 flex items-center gap-1.5 transition">
+            <i data-lucide="eye" class="w-3.5 h-3.5"></i> Visualize
+          </button>
+          <button onclick="showToast('Mode Plan: Call Sheet & Jadwal Syuting')" class="px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-white/60 flex items-center gap-1.5 transition">
+            <i data-lucide="calendar" class="w-3.5 h-3.5"></i> Plan
+          </button>
+          <button onclick="showToast('Mode Shoot: Production Sides')" class="px-3 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-white/60 flex items-center gap-1.5 transition">
+            <i data-lucide="clapperboard" class="w-3.5 h-3.5"></i> Shoot
+          </button>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2.5">
+        <button onclick="switchView('landing')" class="liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium text-slate-700 flex items-center gap-1.5">
+          <i data-lucide="folder-open" class="w-3.5 h-3.5 text-blue-600"></i>
+          <span>Folders & Recent</span>
+        </button>
+        <button onclick="window.print()" class="liquid-pill p-1.5 rounded-xl text-slate-600 hover:text-slate-900" title="Print / Save as PDF">
+          <i data-lucide="printer" class="w-4 h-4"></i>
+        </button>
+        <div class="flex items-center gap-2 pl-2 border-l border-slate-200">
+          <div class="w-7 h-7 rounded-full bg-rose-500 text-white text-[11px] font-bold flex items-center justify-center shadow-sm">AR</div>
+          <div class="hidden sm:flex items-center gap-1 text-xs font-semibold text-slate-700">
+            <span>Mourise</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 1: LANDING PAGE (PROJECT FOLDERS, DRAFTS, & RECENT) -->
+    <!-- ========================================================= -->
+    <main id="view-landing" class="hidden flex-1 overflow-y-auto p-6 md:p-10 space-y-8 select-text">
+      <div class="liquid-glass rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+        <div>
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-semibold mb-2">
+            <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
+            Mourise Studio — Liquid Apple Workspace
+          </div>
+          <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Project Folders & Screenplay Drafts</h1>
+          <p class="text-sm text-slate-500 mt-1">Kelola folder produksi film/MV, versi draft skenario, dan naskah yang terakhir diedit.</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <button onclick="openNewProjectModal()" class="liquid-pill px-4 py-2.5 rounded-2xl text-xs font-semibold text-slate-800 flex items-center gap-2">
+            <i data-lucide="folder-plus" class="w-4 h-4 text-blue-600"></i>
+            <span>Folder Project Baru</span>
+          </button>
+          <button onclick="createNewDraftInActiveProject()" class="px-4 py-2.5 rounded-2xl text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-lg shadow-blue-500/25 flex items-center gap-2 transition">
+            <i data-lucide="file-plus-2" class="w-4 h-4"></i>
+            <span>Draft Script Baru</span>
+          </button>
+        </div>
+      </div>
+
+      <section>
+        <div class="flex items-center justify-between mb-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i data-lucide="clock" class="w-4 h-4 text-blue-500"></i> Recent yang Diedit
+          </h2>
+        </div>
+        <div id="recent-list" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+      </section>
+
+      <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-5 space-y-3">
+          <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+            <i data-lucide="folders" class="w-4 h-4 text-indigo-500"></i> Folder Per Project
+          </h2>
+          <div id="project-folders-list" class="space-y-3"></div>
+        </div>
+
+        <div class="lg:col-span-7 space-y-3">
+          <div class="flex items-center justify-between">
+            <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+              <i data-lucide="files" class="w-4 h-4 text-emerald-500"></i>
+              <span>Draft di Project: <strong id="selected-folder-title" class="text-slate-800"></strong></span>
+            </h2>
+            <button onclick="createNewDraftInActiveProject()" class="text-xs font-semibold text-blue-600 hover:underline flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Tambah Draft
+            </button>
+          </div>
+          <div id="project-drafts-list" class="space-y-3"></div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- VIEW 2: SCREENPLAY EDITOR (SMART FLOW + AUTOCOMPLETE)     -->
+    <!-- ========================================================= -->
+    <div id="view-editor" class="flex-1 flex flex-col overflow-hidden">
+
+      <!-- SCRIPT FORMATTING TOOLBAR -->
+      <div class="no-print h-12 liquid-glass-subtle px-5 flex items-center justify-between border-b border-white/80 z-10">
+        <div class="flex items-center gap-3">
+          <div class="flex items-center gap-2 text-blue-600">
+            <i data-lucide="layout-panel-left" class="w-4 h-4"></i>
+            <input id="script-title-input" type="text" value="MV - NERDOS BAND" onchange="updateScriptTitle(this.value)"
+              class="bg-transparent font-bold text-xs tracking-wide text-blue-600 focus:outline-none focus:bg-white/80 px-2 py-1 rounded-md uppercase" />
+          </div>
+          <div class="flex items-center gap-1.5 text-[11px] text-slate-400">
+            <i data-lucide="save" class="w-3.5 h-3.5"></i>
+            <span id="last-saved-label">Last Saved @ 2:57pm</span>
+          </div>
+        </div>
+
+        <!-- Center: Screenplay Element Buttons (Highlight Active Mode) -->
+        <div class="flex items-center gap-1 bg-white/75 p-1 rounded-xl border border-white shadow-sm">
+          <button id="btn-type-scene" onclick="setBlockType('scene')" title="Scene Heading (INT./EXT.)" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <i data-lucide="clapperboard" class="w-3.5 h-3.5"></i> <span class="hidden xl:inline">Scene</span>
+          </button>
+          <button id="btn-type-action" onclick="setBlockType('action')" title="Action / Deskripsi" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <i data-lucide="megaphone" class="w-3.5 h-3.5"></i> <span class="hidden xl:inline">Action</span>
+          </button>
+          <button id="btn-type-character" onclick="setBlockType('character')" title="Character Name" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <i data-lucide="user" class="w-3.5 h-3.5"></i> <span class="hidden xl:inline">Character</span>
+          </button>
+          <button id="btn-type-parenthetical" onclick="setBlockType('parenthetical')" title="Parenthetical (ekspresi)" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <span class="font-mono text-xs font-bold">( )</span> <span class="hidden xl:inline">Paren</span>
+          </button>
+          <button id="btn-type-dialogue" onclick="setBlockType('dialogue')" title="Dialogue" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <i data-lucide="message-square" class="w-3.5 h-3.5"></i> <span class="hidden xl:inline">Dialogue</span>
+          </button>
+          <button id="btn-type-transition" onclick="setBlockType('transition')" title="Transition (CUT TO:)" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <i data-lucide="arrow-right-left" class="w-3.5 h-3.5"></i> <span class="hidden xl:inline">Transition</span>
+          </button>
+          <button id="btn-type-insert" onclick="setBlockType('insert')" title="Insert / Shot" class="fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition">
+            <i data-lucide="align-justify" class="w-3.5 h-3.5"></i> <span class="hidden xl:inline">Insert</span>
+          </button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <button onclick="syncToProject()" class="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-md shadow-indigo-500/20 flex items-center gap-1.5 transition">
+            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+            <span>Sync to Project</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- WORKSPACE BODY -->
+      <div class="flex-1 flex overflow-hidden">
+
+        <!-- Left Sidebar: Screenplay Revisions & Scenes -->
+        <aside class="no-print w-64 liquid-glass-subtle border-r border-white/80 flex flex-col justify-between p-4 overflow-y-auto">
+          <div class="space-y-6">
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span id="revisions-count-title" class="text-xs font-bold text-slate-700">Screenplay Revisions (1)</span>
+                <button onclick="addNewRevision()" class="text-[11px] text-blue-600 font-semibold hover:underline">+ New Rev</button>
+              </div>
+              <div id="revisions-sidebar-list" class="space-y-1.5"></div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between mb-2">
+                <span class="text-xs font-bold text-slate-700">Scene Navigation</span>
+                <button onclick="addNewSceneBlock()" class="text-[11px] text-blue-600 font-semibold hover:underline">+ Scene</button>
+              </div>
+              <div id="scenes-sidebar-list" class="space-y-1"></div>
+            </div>
+          </div>
+
+          <!-- Smart Guide Box -->
+          <div class="liquid-pill p-3 rounded-2xl text-[11px] text-slate-600 space-y-1.5">
+            <div class="font-bold text-slate-800 flex items-center gap-1">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-blue-600"></i> Smart StudioBinder Logic:
+            </div>
+            <div>• Ketik <b>I</b> atau <b>E</b> di Scene untuk pop-up <b>INT. / EXT.</b></div>
+            <div>• Ketik <b>- </b> di Scene untuk pop-up <b>DAY / NIGHT</b></div>
+            <div>• <b>Enter</b> mengalir otomatis (Scene → Action, Character → Dialogue)</div>
+            <div>• <b>Tab</b> untuk ganti format baris</div>
+            <div>• Panah <b>↑ / ↓</b> & <b>Backspace</b> mengalir seperti MS Word</div>
+          </div>
+        </aside>
+
+        <!-- Center Canvas -->
+        <div id="editor-scroll-container" class="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col items-center space-y-4 select-text" onscroll="hideAutocomplete()">
+
+          <!-- Unsynced Changes Banner -->
+          <div id="unsynced-banner" class="no-print w-full max-w-[816px] rounded-xl bg-amber-50/90 border border-amber-200/80 px-4 py-2.5 flex items-center justify-between text-xs text-amber-900 shadow-sm">
+            <div class="flex items-center gap-2">
+              <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
+              <span><strong>Unsynced Changes:</strong> <span id="unsynced-text">This revision was generated on Oct 15 @ 2:57pm, but has not been synced to the project yet.</span></span>
+            </div>
+            <button onclick="document.getElementById('unsynced-banner').classList.add('hidden')" class="text-amber-600 hover:text-amber-900">
+              <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <!-- Author Metadata Card -->
+          <div class="no-print w-full max-w-[816px] liquid-glass rounded-xl px-5 py-3 flex items-center justify-between text-xs text-slate-600">
+            <div class="flex items-center gap-3">
+              <span id="meta-rev-badge" class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-semibold text-slate-700">v1</span>
+              <span><strong id="meta-script-title" class="text-slate-900">MV - NERDOS BAND</strong> was generated by <strong class="text-slate-900">Alfin Radidtya</strong> <span id="meta-date">on May 21 @ 5:20pm</span></span>
+            </div>
+            <span class="text-[11px] text-emerald-600 font-medium">Smart Flow Active</span>
+          </div>
+
+          <!-- SCREENPLAY PAPER (Click anywhere at bottom to focus last line like Word) -->
+          <div id="screenplay-paper" class="screenplay-page rounded-sm" onclick="handlePaperClick(event)"></div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="fixed bottom-5 right-5 hidden liquid-glass px-4 py-2.5 rounded-2xl shadow-xl text-xs font-semibold text-slate-800 flex items-center gap-2 z-50 border border-white">
+    <span class="w-2 h-2 rounded-full bg-blue-600"></span>
+    <span id="toast-msg">Tersimpan</span>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'mourise_studio_screenwriter_v2';
+
+    const DEFAULT_BLOCKS = [
+      { id: 'b1', type: 'scene', text: 'INT. GEDUNG FAKULTAS. DAY' },
+      { id: 'b2', type: 'action', text: 'Suasana kampus ramai oleh mahasiswa yang berlalu-lalang. Beberapa mahasiswa baru berjalan berkelompok, sebagian lainnya sibuk mencari ruang kelas.' },
+      { id: 'b3', type: 'action', text: 'Seorang MAHASISWA BARU (19), membawa tas ransel dan buku catatan, berdiri di depan papan informasi. Matanya mencari sebuah tulisan.' },
+      { id: 'b4', type: 'insert', text: 'INSERT – PAPAN JADWAL PERKULIAHAN' },
+      { id: 'b5', type: 'insert', text: 'DESAIN VISUAL – RUANG 204 – 08.00 WIB.' },
+      { id: 'b6', type: 'action', text: 'Mahasiswa baru itu tersenyum kecil. Ia memeriksa jam tangannya.' },
+      { id: 'b7', type: 'character', text: 'MAHASISWA BARU' },
+      { id: 'b8', type: 'parenthetical', text: '(pelan, kepada diri sendiri)' },
+      { id: 'b9', type: 'dialogue', text: 'Desain Visual. Oke, ruang 204.' },
+      { id: 'b10', type: 'action', text: 'Ia membetulkan posisi tasnya, lalu berjalan menyusuri koridor.' },
+      { id: 'b11', type: 'transition', text: 'CUT TO:' },
+      { id: 'b12', type: 'scene', text: 'INT. KORIDOR LANTAI DUA. DAY' },
+      { id: 'b13', type: 'action', text: 'Mahasiswa baru itu berhenti di depan pintu bertuliskan RUANG 204.' },
+      { id: 'b14', type: 'action', text: 'Dari dalam terdengar suara mahasiswa berbincang dan kursi bergeser.' },
+      { id: 'b15', type: 'action', text: 'Ia mengintip melalui kaca kecil di pintu. Beberapa mahasiswa sudah duduk di dalam kelas.' },
+      { id: 'b16', type: 'action', text: 'Ia menarik napas panjang, merapikan kemejanya, lalu tersenyum gugup.' },
+      { id: 'b17', type: 'character', text: 'MAHASISWA BARU (V.O.)' },
+      { id: 'b18', type: 'dialogue', text: 'Hari pertama kuliah. Jangan sampai salah masuk ruangan lagi.' }
+    ];
+
+    const DEFAULT_STATE = {
+      activeProjectId: 'proj-1',
+      activeDraftId: 'draft-1',
+      activeBlockId: 'b1',
+      projects: [
+        {
+          id: 'proj-1',
+          name: 'MV - NERDOS BAND (Ku Ingin Dia)',
+          category: 'Music Video Production',
+          updatedAt: 'Oct 15 @ 2:57pm',
+          drafts: [
+            {
+              id: 'draft-1',
+              version: 'v1',
+              title: 'MV - NERDOS BAND',
+              author: 'Alfin Radidtya',
+              createdAt: 'May 21 @ 5:20pm',
+              lastSaved: '2:57pm',
+              synced: false,
+              blocks: DEFAULT_BLOCKS
+            }
+          ]
+        },
+        {
+          id: 'proj-2',
+          name: 'Short Film — Titik Jeda',
+          category: 'Short Film',
+          updatedAt: 'Oct 12 @ 8:15pm',
+          drafts: [
+            {
+              id: 'draft-2',
+              version: 'v1',
+              title: 'TITIK JEDA - DRAFT 1',
+              author: 'Alfin Radidtya',
+              createdAt: 'Jun 10 @ 4:00pm',
+              lastSaved: '8:15pm',
+              synced: true,
+              blocks: [
+                { id: 't1', type: 'scene', text: 'EXT. HALTE BUS KOTA. NIGHT' },
+                { id: 't2', type: 'action', text: 'Hujan rintik membasahi aspal jalanan. Lampu jalan memantulkan cahaya keemasan.' }
+              ]
+            }
+          ]
+        },
+        {
+          id: 'proj-3',
+          name: 'Animation Bible — MEKROK',
+          category: '2D Animation Concept',
+          updatedAt: 'Oct 08 @ 11:30am',
+          drafts: [
+            {
+              id: 'draft-3',
+              version: 'v1',
+              title: 'MEKROK - PILOT EPISODE',
+              author: 'Alfin Radidtya',
+              createdAt: 'Jun 24 @ 11:30am',
+              lastSaved: '11:30am',
+              synced: true,
+              blocks: [
+                { id: 'm1', type: 'scene', text: 'EXT. ALUN-ALUN PONOROGO. DAY' },
+                { id: 'm2', type: 'action', text: 'Tabuhan kendang dan terompet Reog menggema di udara.' }
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    const PLACEHOLDERS = {
+      scene: 'INT. / EXT. LOKASI - DAY / NIGHT',
+      action: 'Tulis deskripsi adegan / action...',
+      character: 'NAMA KARAKTER',
+      parenthetical: '(ekspresi / intonasi)',
+      dialogue: 'Ketik dialog karakter...',
+      transition: 'CUT TO:',
+      insert: 'INSERT – OBJEK / DETAIL SHOT'
+    };
+
+    const TYPE_LABELS = {
+      scene: 'SCENE',
+      action: 'ACTION',
+      character: 'CHAR',
+      parenthetical: 'PAREN',
+      dialogue: 'DIALOG',
+      transition: 'TRANS',
+      insert: 'INSERT'
+    };
+
+    const TYPE_CYCLE = ['scene', 'action', 'character', 'parenthetical', 'dialogue', 'transition', 'insert'];
+
+    let state = loadState();
+    let autocompleteState = {
+      visible: false,
+      items: [],
+      selectedIndex: 0,
+      blockId: null,
+      mode: null // 'prefix' | 'time' | 'character' | 'transition'
+    };
+
+    function loadState() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        return raw ? JSON.parse(raw) : JSON.parse(JSON.stringify(DEFAULT_STATE));
+      } catch (e) {
+        return JSON.parse(JSON.stringify(DEFAULT_STATE));
+      }
+    }
+
+    function saveState() {
+      const now = new Date();
+      const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      const draft = getActiveDraft();
+      if (draft) {
+        draft.lastSaved = timeStr;
+        const lbl = document.getElementById('last-saved-label');
+        if (lbl) lbl.textContent = `Last Saved @ ${timeStr}`;
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function getActiveProject() {
+      return state.projects.find(p => p.id === state.activeProjectId) || state.projects[0];
+    }
+
+    function getActiveDraft() {
+      const proj = getActiveProject();
+      return proj.drafts.find(d => d.id === state.activeDraftId) || proj.drafts[0];
+    }
+
+    // =====================================================
+    // CARET & SELECTION UTILITIES (Agar mengalir seperti Word)
+    // =====================================================
+    function getCaretOffset(el) {
+      const sel = window.getSelection();
+      if (!sel.rangeCount) return 0;
+      const range = sel.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(el);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      return preCaretRange.toString().length;
+    }
+
+    function setCaretOffset(el, offset) {
+      if (!el) return;
+      el.focus();
+      const sel = window.getSelection();
+      const range = document.createRange();
+      let charIndex = 0;
+      let nodeStack = [el];
+      let node;
+      let found = false;
+
+      while (!found && (node = nodeStack.pop())) {
+        if (node.nodeType === 3) {
+          const nextCharIndex = charIndex + node.length;
+          if (offset >= charIndex && offset <= nextCharIndex) {
+            range.setStart(node, offset - charIndex);
+            range.collapse(true);
+            found = true;
+          }
+          charIndex = nextCharIndex;
+        } else {
+          let i = node.childNodes.length;
+          while (i--) {
+            nodeStack.push(node.childNodes[i]);
+          }
+        }
+      }
+
+      if (!found) {
+        range.selectNodeContents(el);
+        range.collapse(false);
+      }
+      sel.removeAllRanges();
+      sel.addRange(range);
+    }
+
+    // Klik ruang kosong di bawah kertas langsung fokus ke baris terakhir (seperti MS Word)
+    function handlePaperClick(e) {
+      if (e.target.id === 'screenplay-paper') {
+        const draft = getActiveDraft();
+        const lastBlock = draft.blocks[draft.blocks.length - 1];
+        if (lastBlock) {
+          focusBlock(lastBlock.id, 'end');
+        }
+      }
+    }
+
+    // =====================================================
+    // SMART AUTOCOMPLETE ENGINE (Persis StudioBinder)
+    // =====================================================
+    function getKnownLocations() {
+      const draft = getActiveDraft();
+      const locs = new Set(['GEDUNG FAKULTAS', 'KORIDOR LANTAI DUA', 'RUANG KELAS 204', 'KANTIN KAMPUS', 'KAMAR KOS', 'JALAN RAYA']);
+      draft.blocks.forEach(b => {
+        if (b.type === 'scene') {
+          const m = b.text.toUpperCase().match(/^(?:INT\.|EXT\.|INT\.\/EXT\.|I\/E\.)\s+([^.\-–]+)/);
+          if (m && m[1] && m[1].trim().length > 2) {
+            locs.add(m[1].trim());
+          }
+        }
+      });
+      return Array.from(locs);
+    }
+
+    function getKnownCharacters() {
+      const draft = getActiveDraft();
+      const chars = new Set(['MAHASISWA BARU', 'MAHASISWA BARU (V.O.)', 'DOSEN']);
+      draft.blocks.forEach(b => {
+        if (b.type === 'character' && b.text.trim().length > 1) {
+          chars.add(b.text.trim().toUpperCase());
+        }
+      });
+      return Array.from(chars);
+    }
+
+    function evaluateAutocomplete(blockId) {
+      const draft = getActiveDraft();
+      const block = draft.blocks.find(x => x.id === blockId);
+      if (!block) return hideAutocomplete();
+
+      const rawText = block.text;
+      const upper = rawText.toUpperCase();
+      let suggestions = [];
+      let headerTitle = 'Saran Otomatis (Enter / Tab)';
+      let mode = null;
+
+      // 1. Jika di SCENE HEADING (atau di Action yang baru diketik 1-3 huruf I / E)
+      if (block.type === 'scene') {
+        // A. Belum ada titik setelah INT / EXT -> Tawarkan INT. / EXT. / I/E.
+        if (!/^(INT\.|EXT\.|INT\.\/EXT\.|I\/E\.)/.test(upper)) {
+          const prefixes = [
+            { label: 'INT. ', desc: 'Interior (Dalam Ruangan)', value: 'INT. ' },
+            { label: 'EXT. ', desc: 'Exterior (Luar Ruangan)', value: 'EXT. ' },
+            { label: 'INT./EXT. ', desc: 'Interior & Exterior', value: 'INT./EXT. ' },
+            { label: 'I/E. ', desc: 'Singkatan Int/Ext', value: 'I/E. ' }
+          ];
+          const clean = upper.trim();
+          suggestions = prefixes.filter(p => clean === '' || p.label.startsWith(clean));
+          headerTitle = 'Scene Setting (INT. / EXT.)';
+          mode = 'prefix';
+        }
+        // B. Sudah ketik INT. atau EXT. dan sedang mengetik Waktu setelah tanda " - " atau ". "
+        else if (/^(?:INT\.|EXT\.|INT\.\/EXT\.|I\/E\.)\s+.+(\s-\s*|\.\s*)$/.test(upper) ||
+                 /^(?:INT\.|EXT\.|INT\.\/EXT\.|I\/E\.)\s+.+(?:\s-\s*|\.\s*)([A-Z]+)$/.test(upper)) {
+          const times = [
+            { label: 'DAY', desc: 'Siang Hari', value: 'DAY' },
+            { label: 'NIGHT', desc: 'Malam Hari', value: 'NIGHT' },
+            { label: 'CONTINUOUS', desc: 'Berlanjut Langsung', value: 'CONTINUOUS' },
+            { label: 'MORNING', desc: 'Pagi Hari', value: 'MORNING' },
+            { label: 'AFTERNOON', desc: 'Sore Hari', value: 'AFTERNOON' },
+            { label: 'DUSK', desc: 'Senja / Maghrib', value: 'DUSK' },
+            { label: 'MOMENTS LATER', desc: 'Beberapa Saat Kemudian', value: 'MOMENTS LATER' }
+          ];
+          const matchTime = upper.match(/(?:\s-\s*|\.\s*)([A-Z]*)$/);
+          const partialTime = matchTime ? matchTime[1] : '';
+          suggestions = times
+            .filter(t => t.label.startsWith(partialTime) && t.label !== partialTime)
+            .map(t => ({
+              label: t.label,
+              desc: t.desc,
+              value: upper.replace(/(?:\s-\s*|\.\s*)[A-Z]*$/, (m) => {
+                const sep = m.includes('-') ? ' - ' : '. ';
+                return sep + t.value;
+              })
+            }));
+          headerTitle = 'Waktu Scene (Time of Day)';
+          mode = 'time';
+        }
+        // C. Baru ketik "INT. " atau "EXT. " -> Tawarkan daftar Lokasi yang pernah dipakai
+        else {
+          const matchLoc = upper.match(/^(INT\.|EXT\.|INT\.\/EXT\.|I\/E\.)\s*([A-Z0-9\s]*)$/);
+          if (matchLoc) {
+            const prefix = matchLoc[1] + ' ';
+            const partialLoc = (matchLoc[2] || '').trim();
+            const knownLocs = getKnownLocations();
+            suggestions = knownLocs
+              .filter(loc => loc.startsWith(partialLoc) && loc !== partialLoc)
+              .map(loc => ({
+                label: `${prefix}${loc}`,
+                desc: 'Lokasi Tersimpan',
+                value: `${prefix}${loc}. `
+              }));
+            headerTitle = 'Saran Lokasi Scene';
+            mode = 'location';
+          }
+        }
+      }
+
+      // 2. Jika di Action tapi user mengetik "int" atau "ext" di awal baris -> tawarkan ubah ke Scene Heading otomatis!
+      else if (block.type === 'action' && rawText.trim().length >= 1 && rawText.trim().length <= 4) {
+        const clean = upper.trim();
+        if ('INT.'.startsWith(clean) || 'EXT.'.startsWith(clean)) {
+          suggestions = [
+            { label: 'INT. ', desc: 'Ubah ke Scene Heading (Interior)', value: 'INT. ', convertType: 'scene' },
+            { label: 'EXT. ', desc: 'Ubah ke Scene Heading (Exterior)', value: 'EXT. ', convertType: 'scene' }
+          ].filter(item => item.label.startsWith(clean));
+          headerTitle = 'Pintasan Scene Heading';
+          mode = 'convert_scene';
+        }
+      }
+
+      // 3. Jika di CHARACTER -> Tawarkan nama karakter yang sudah ada di skenario
+      else if (block.type === 'character') {
+        const clean = upper.trim();
+        const chars = getKnownCharacters();
+        suggestions = chars
+          .filter(c => (clean === '' || c.startsWith(clean)) && c !== clean)
+          .map(c => ({ label: c, desc: 'Karakter', value: c }));
+        // Tambahkan opsi (V.O.) dan (O.S.) jika sudah ada nama
+        if (clean.length > 2 && !clean.includes('(')) {
+          suggestions.push(
+            { label: `${clean} (V.O.)`, desc: 'Voice Over', value: `${clean} (V.O.)` },
+            { label: `${clean} (O.S.)`, desc: 'Off Screen', value: `${clean} (O.S.)` }
+          );
+        }
+        headerTitle = 'Karakter Skenario';
+        mode = 'character';
+      }
+
+      // 4. Jika di TRANSITION -> Tawarkan CUT TO:, DISSOLVE TO:, FADE OUT.
+      else if (block.type === 'transition') {
+        const clean = upper.trim();
+        const trans = [
+          { label: 'CUT TO:', desc: 'Transisi Standar', value: 'CUT TO:' },
+          { label: 'SMASH CUT TO:', desc: 'Potongan Cepat / Kaget', value: 'SMASH CUT TO:' },
+          { label: 'MATCH CUT TO:', desc: 'Transisi Visual Senada', value: 'MATCH CUT TO:' },
+          { label: 'DISSOLVE TO:', desc: 'Transisi Halus', value: 'DISSOLVE TO:' },
+          { label: 'FADE OUT.', desc: 'Layar Gelap', value: 'FADE OUT.' }
+        ];
+        suggestions = trans.filter(t => (clean === '' || t.label.startsWith(clean)) && t.label !== clean);
+        headerTitle = 'Transisi';
+        mode = 'transition';
+      }
+
+      if (suggestions.length === 0) {
+        return hideAutocomplete();
+      }
+
+      autocompleteState = {
+        visible: true,
+        items: suggestions,
+        selectedIndex: 0,
+        blockId,
+        mode
+      };
+
+      renderAutocompletePopup(headerTitle);
+    }
+
+    function renderAutocompletePopup(headerTitle) {
+      const popup = document.getElementById('autocomplete-popup');
+      const header = document.getElementById('autocomplete-header');
+      const list = document.getElementById('autocomplete-items');
+      const lineEl = document.querySelector(`[data-line-id="${autocompleteState.blockId}"]`);
+      if (!lineEl) return hideAutocomplete();
+
+      const rect = lineEl.getBoundingClientRect();
+      popup.style.top = `${Math.min(window.innerHeight - 220, rect.bottom + 6)}px`;
+      popup.style.left = `${Math.max(80, rect.left)}px`;
+
+      if (headerTitle) header.textContent = headerTitle;
+
+      list.innerHTML = autocompleteState.items.map((item, idx) => `
+        <div onmousedown="applyAutocompleteItem(${idx}); event.preventDefault();"
+             class="px-3 py-1.5 rounded-lg cursor-pointer flex items-center justify-between gap-4 text-xs transition ${idx === autocompleteState.selectedIndex ? 'bg-blue-600 text-white font-semibold' : 'text-slate-700 hover:bg-slate-100'}">
+          <span class="font-mono font-bold">${item.label}</span>
+          <span class="text-[10px] ${idx === autocompleteState.selectedIndex ? 'text-blue-100' : 'text-slate-400'}">${item.desc}</span>
+        </div>
+      `).join('');
+
+      popup.classList.remove('hidden');
+    }
+
+    function applyAutocompleteItem(index) {
+      const item = autocompleteState.items[index];
+      if (!item) return;
+      const draft = getActiveDraft();
+      const block = draft.blocks.find(x => x.id === autocompleteState.blockId);
+      if (!block) return;
+
+      if (item.convertType) {
+        block.type = item.convertType;
+      }
+      block.text = item.value;
+      const targetId = block.id;
+      const shouldContinueAutocomplete = item.value.endsWith(' ');
+
+      hideAutocomplete();
+      saveState();
+      renderEditor();
+      focusBlock(targetId, 'end');
+
+      if (shouldContinueAutocomplete) {
+        setTimeout(() => evaluateAutocomplete(targetId), 30);
+      }
+    }
+
+    function hideAutocomplete() {
+      autocompleteState.visible = false;
+      const popup = document.getElementById('autocomplete-popup');
+      if (popup) popup.classList.add('hidden');
+    }
+
+    // =====================================================
+    // RENDER EDITOR & TOOLBAR HIGHLIGHT
+    // =====================================================
+    function updateToolbarActiveState() {
+      const draft = getActiveDraft();
+      const activeBlock = draft.blocks.find(x => x.id === state.activeBlockId);
+      const activeType = activeBlock ? activeBlock.type : 'action';
+
+      TYPE_CYCLE.forEach(t => {
+        const btn = document.getElementById(`btn-type-${t}`);
+        if (!btn) return;
+        if (t === activeType) {
+          btn.className = 'fmt-btn px-2.5 py-1 rounded-lg text-xs font-bold bg-blue-600 text-white shadow-sm flex items-center gap-1 transition';
+        } else {
+          btn.className = 'fmt-btn px-2.5 py-1 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-100 flex items-center gap-1 transition';
+        }
+      });
+    }
+
+    function renderEditor() {
+      const proj = getActiveProject();
+      const draft = getActiveDraft();
+
+      document.getElementById('header-project-name').textContent = proj.name;
+      document.getElementById('active-rev-badge').textContent = draft.version;
+      document.getElementById('script-title-input').value = draft.title;
+      document.getElementById('last-saved-label').textContent = `Last Saved @ ${draft.lastSaved}`;
+      document.getElementById('meta-rev-badge').textContent = draft.version;
+      document.getElementById('meta-script-title').textContent = draft.title;
+      document.getElementById('meta-date').textContent = `on ${draft.createdAt}`;
+
+      // Revisions list in left sidebar
+      document.getElementById('revisions-count-title').textContent = `Screenplay Revisions (${proj.drafts.length})`;
+      const revList = document.getElementById('revisions-sidebar-list');
+      revList.innerHTML = proj.drafts.map(d => `
+        <div onclick="selectDraft('${proj.id}', '${d.id}')"
+          class="cursor-pointer p-2.5 rounded-xl flex items-center justify-between text-xs transition ${d.id === draft.id ? 'bg-white shadow-sm border-r-4 border-blue-600 font-bold text-slate-900' : 'text-slate-600 hover:bg-white/60'}">
+          <div class="flex items-center gap-2 truncate">
+            <span class="px-1.5 py-0.5 rounded bg-slate-100 border border-slate-200 text-[10px] font-semibold">${d.version}</span>
+            <span class="truncate">${d.title}</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Render Screenplay Paper
+      const paper = document.getElementById('screenplay-paper');
+      let sceneNumber = 0;
+      const scenesForSidebar = [];
+
+      paper.innerHTML = draft.blocks.map((block) => {
+        const placeholder = PLACEHOLDERS[block.type] || '';
+        const badge = TYPE_LABELS[block.type] || 'LINE';
+
+        if (block.type === 'scene') {
+          sceneNumber++;
+          scenesForSidebar.push({ num: sceneNumber, text: block.text || 'UNTITLED SCENE', id: block.id });
+          return `
+            <div class="script-line-wrapper wrapper-scene" data-wrapper-id="${block.id}">
+              <span class="line-type-badge">${badge}</span>
+              <span class="scene-num-left">${sceneNumber}</span>
+              <div contenteditable="true"
+                   spellcheck="false"
+                   data-line-id="${block.id}"
+                   data-placeholder="${placeholder}"
+                   onfocus="onLineFocus('${block.id}')"
+                   oninput="onLineInput('${block.id}', this)"
+                   onkeydown="onLineKeydown(event, '${block.id}', this)"
+                   class="script-line">${escapeHtml(block.text)}</div>
+              <span class="scene-num-right">${sceneNumber}</span>
+            </div>
+          `;
+        }
+
+        return `
+          <div class="script-line-wrapper wrapper-${block.type}" data-wrapper-id="${block.id}">
+            <span class="line-type-badge">${badge}</span>
+            <div contenteditable="true"
+                 spellcheck="false"
+                 data-line-id="${block.id}"
+                 data-placeholder="${placeholder}"
+                 onfocus="onLineFocus('${block.id}')"
+                 oninput="onLineInput('${block.id}', this)"
+                 onkeydown="onLineKeydown(event, '${block.id}', this)"
+                 class="script-line">${escapeHtml(block.text)}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Render Scene Navigation
+      const sceneList = document.getElementById('scenes-sidebar-list');
+      sceneList.innerHTML = scenesForSidebar.map(s => `
+        <button onclick="scrollToBlock('${s.id}')" class="w-full text-left px-2.5 py-1.5 rounded-lg text-[11px] text-slate-600 hover:bg-white hover:text-slate-900 truncate flex items-center gap-2 transition">
+          <span class="font-bold text-blue-600">${s.num}.</span>
+          <span class="truncate">${escapeHtml(s.text)}</span>
+        </button>
+      `).join('');
+
+      updateToolbarActiveState();
+    }
+
+    function escapeHtml(str) {
+      return (str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    function onLineFocus(blockId) {
+      state.activeBlockId = blockId;
+      updateToolbarActiveState();
+      evaluateAutocomplete(blockId);
+    }
+
+    function onLineInput(blockId, el) {
+      const draft = getActiveDraft();
+      const idx = draft.blocks.findIndex(x => x.id === blockId);
+      if (idx === -1) return;
+      const block = draft.blocks[idx];
+
+      block.text = el.innerText.replace(/\n$/, '');
+      draft.synced = false;
+      document.getElementById('unsynced-banner').classList.remove('hidden');
+
+      // Smart Auto-Detect saat mengetik mengalir:
+      // 1. Jika di Dialogue dan user mengetik "(" di awal -> otomatis ubah ke Parenthetical
+      if (block.type === 'dialogue' && block.text.trim() === '(') {
+        block.type = 'parenthetical';
+        block.text = '()';
+        saveState();
+        renderEditor();
+        focusBlock(block.id, 1);
+        return;
+      }
+
+      // 2. Jika di Action dan user mengetik "CUT TO:" -> otomatis jadi Transition
+      if (block.type === 'action' && /^(CUT TO:|DISSOLVE TO:|FADE OUT\.|SMASH CUT TO:)$/i.test(block.text.trim())) {
+        block.type = 'transition';
+        block.text = block.text.trim().toUpperCase();
+        saveState();
+        renderEditor();
+        focusBlock(block.id, 'end');
+        return;
+      }
+
+      saveState();
+      evaluateAutocomplete(blockId);
+    }
+
+    // =====================================================
+    // KEYBOARD FLOW LOGIC (Mengalir seperti Word + StudioBinder)
+    // =====================================================
+    function onLineKeydown(e, blockId, el) {
+      const draft = getActiveDraft();
+      const idx = draft.blocks.findIndex(x => x.id === blockId);
+      if (idx === -1) return;
+      const current = draft.blocks[idx];
+
+      // 1. Jika Pop-up Autocomplete sedang aktif, tangkap navigasi panah & Enter/Tab
+      if (autocompleteState.visible && autocompleteState.blockId === blockId) {
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          autocompleteState.selectedIndex = (autocompleteState.selectedIndex + 1) % autocompleteState.items.length;
+          renderAutocompletePopup();
+          return;
+        }
+        if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          autocompleteState.selectedIndex = (autocompleteState.selectedIndex - 1 + autocompleteState.items.length) % autocompleteState.items.length;
+          renderAutocompletePopup();
+          return;
+        }
+        if (e.key === 'Enter' || e.key === 'Tab') {
+          e.preventDefault();
+          applyAutocompleteItem(autocompleteState.selectedIndex);
+          return;
+        }
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          hideAutocomplete();
+          return;
+        }
+      }
+
+      const caretPos = getCaretOffset(el);
+      const textLen = current.text.length;
+
+      // 2. Tombol TAB: Ganti elemen skenario secara cepat (Smart Cycle)
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        if (e.shiftKey) {
+          const prevIdx = (TYPE_CYCLE.indexOf(current.type) - 1 + TYPE_CYCLE.length) % TYPE_CYCLE.length;
+          current.type = TYPE_CYCLE[prevIdx];
+        } else {
+          // Di StudioBinder: jika di Action kosong tekan Tab -> langsung ke Character
+          if (current.type === 'action' && current.text.trim() === '') {
+            current.type = 'character';
+          } else if (current.type === 'dialogue' && current.text.trim() === '') {
+            current.type = 'parenthetical';
+          } else {
+            const nextIdx = (TYPE_CYCLE.indexOf(current.type) + 1) % TYPE_CYCLE.length;
+            current.type = TYPE_CYCLE[nextIdx];
+          }
+        }
+        hideAutocomplete();
+        saveState();
+        renderEditor();
+        focusBlock(blockId, caretPos);
+        return;
+      }
+
+      // 3. Tombol ENTER: Split kalimat di posisi kursor & alirkan ke format elemen berikutnya (seperti Word + StudioBinder)
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        hideAutocomplete();
+
+        // Jika baris saat ini kosong dan ditekan Enter lagi -> ubah jadi Action (standar Final Draft/StudioBinder)
+        if (current.text.trim() === '' && current.type !== 'action') {
+          current.type = 'action';
+          saveState();
+          renderEditor();
+          focusBlock(blockId, 0);
+          return;
+        }
+
+        // Potong teks di posisi kursor (jika kursor di tengah kalimat, sisa kanan turun ke baris bawah seperti Word)
+        const beforeText = current.text.slice(0, caretPos);
+        const afterText = current.text.slice(caretPos);
+        current.text = beforeText;
+
+        // Tentukan tipe blok baru secara otomatis mengikuti alur naskah
+        let nextType = 'action';
+        if (current.type === 'scene') nextType = 'action';
+        else if (current.type === 'action') nextType = 'action';
+        else if (current.type === 'character') nextType = 'dialogue';
+        else if (current.type === 'parenthetical') nextType = 'dialogue';
+        else if (current.type === 'dialogue') nextType = 'action';
+        else if (current.type === 'transition') nextType = 'scene';
+        else if (current.type === 'insert') nextType = 'action';
+
+        const newId = 'b_' + Date.now();
+        draft.blocks.splice(idx + 1, 0, {
+          id: newId,
+          type: nextType,
+          text: afterText
+        });
+
+        state.activeBlockId = newId;
+        saveState();
+        renderEditor();
+        focusBlock(newId, 0);
+        return;
+      }
+
+      // 4. Tombol BACKSPACE di awal baris (offset 0): Gabungkan (Merge) dengan baris di atasnya persis seperti MS Word!
+      if (e.key === 'Backspace' && caretPos === 0) {
+        const sel = window.getSelection();
+        if (sel && !sel.isCollapsed) return; // Biarkan hapus teks yang sedang diblok
+
+        if (idx > 0) {
+          e.preventDefault();
+          hideAutocomplete();
+          const prevBlock = draft.blocks[idx - 1];
+          const prevLength = prevBlock.text.length;
+
+          // Gabungkan teks baris ini ke ujung baris sebelumnya
+          prevBlock.text = prevBlock.text + current.text;
+          draft.blocks.splice(idx, 1);
+          state.activeBlockId = prevBlock.id;
+
+          saveState();
+          renderEditor();
+          focusBlock(prevBlock.id, prevLength);
+          return;
+        }
+      }
+
+      // 5. Tombol DELETE di ujung akhir baris: Tarik baris bawahnya ke baris ini (seperti MS Word)
+      if (e.key === 'Delete' && caretPos === textLen && idx < draft.blocks.length - 1) {
+        e.preventDefault();
+        hideAutocomplete();
+        const nextBlock = draft.blocks[idx + 1];
+        current.text = current.text + nextBlock.text;
+        draft.blocks.splice(idx + 1, 1);
+        saveState();
+        renderEditor();
+        focusBlock(current.id, caretPos);
+        return;
+      }
+
+      // 6. Navigasi Panah ATAS & KIRI mengalir antar-baris seperti Word
+      if ((e.key === 'ArrowUp' || e.key === 'ArrowLeft') && caretPos === 0 && idx > 0) {
+        e.preventDefault();
+        hideAutocomplete();
+        const prevBlock = draft.blocks[idx - 1];
+        focusBlock(prevBlock.id, 'end');
+        return;
+      }
+
+      // 7. Navigasi Panah BAWAH & KANAN mengalir antar-baris seperti Word
+      if ((e.key === 'ArrowDown' || e.key === 'ArrowRight') && caretPos >= textLen && idx < draft.blocks.length - 1) {
+        e.preventDefault();
+        hideAutocomplete();
+        const nextBlock = draft.blocks[idx + 1];
+        focusBlock(nextBlock.id, 0);
+        return;
+      }
+    }
+
+    function setBlockType(type) {
+      const draft = getActiveDraft();
+      const block = draft.blocks.find(x => x.id === state.activeBlockId) || draft.blocks[draft.blocks.length - 1];
+      if (block) {
+        block.type = type;
+        if (type === 'parenthetical' && !block.text.startsWith('(')) {
+          block.text = `(${block.text})`;
+        }
+        saveState();
+        renderEditor();
+        focusBlock(block.id, 'end');
+      }
+    }
+
+    function focusBlock(blockId, position = 'end') {
+      setTimeout(() => {
+        const el = document.querySelector(`[data-line-id="${blockId}"]`);
+        if (!el) return;
+        state.activeBlockId = blockId;
+        updateToolbarActiveState();
+
+        const len = el.innerText.length;
+        const targetOffset = position === 'end' ? len : Math.min(len, position);
+        setCaretOffset(el, targetOffset);
+        evaluateAutocomplete(blockId);
+      }, 15);
+    }
+
+    function scrollToBlock(blockId) {
+      const el = document.querySelector(`[data-wrapper-id="${blockId}"]`);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        focusBlock(blockId, 'end');
+      }
+    }
+
+    function addNewSceneBlock() {
+      const draft = getActiveDraft();
+      const newId = 'b_' + Date.now();
+      draft.blocks.push({ id: newId, type: 'scene', text: '' });
+      saveState();
+      renderEditor();
+      focusBlock(newId, 0);
+    }
+
+    function addNewRevision() {
+      const proj = getActiveProject();
+      const currentDraft = getActiveDraft();
+      const nextNum = proj.drafts.length + 1;
+      const newDraft = {
+        id: 'draft_' + Date.now(),
+        version: 'v' + nextNum,
+        title: `${currentDraft.title} (Rev ${nextNum})`,
+        author: 'Alfin Radidtya',
+        createdAt: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) + ' @ ' + new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+        lastSaved: 'Just now',
+        synced: false,
+        blocks: JSON.parse(JSON.stringify(currentDraft.blocks))
+      };
+      proj.drafts.unshift(newDraft);
+      state.activeDraftId = newDraft.id;
+      saveState();
+      renderEditor();
+      showToast(`Revisi baru ${newDraft.version} berhasil dibuat`);
+    }
+
+    function updateScriptTitle(val) {
+      const draft = getActiveDraft();
+      draft.title = val.trim() || 'UNTITLED SCRIPT';
+      saveState();
+      renderEditor();
+    }
+
+    function syncToProject() {
+      const draft = getActiveDraft();
+      draft.synced = true;
+      document.getElementById('unsynced-banner').classList.add('hidden');
+      saveState();
+      showToast(`"${draft.title}" (${draft.version}) berhasil di-sync ke project!`);
+    }
+
+    // =====================================================
+    // RENDER LANDING PAGE (FOLDERS, DRAFTS, RECENT)
+    // =====================================================
+    function switchView(view) {
+      hideAutocomplete();
+      const landing = document.getElementById('view-landing');
+      const editor = document.getElementById('view-editor');
+      if (view === 'landing') {
+        landing.classList.remove('hidden');
+        editor.classList.add('hidden');
+        renderLanding();
+      } else {
+        landing.classList.add('hidden');
+        editor.classList.remove('hidden');
+        renderEditor();
+      }
+      lucide.createIcons();
+    }
+
+    function renderLanding() {
+      const activeProj = getActiveProject();
+      document.getElementById('selected-folder-title').textContent = activeProj.name;
+
+      const allDrafts = [];
+      state.projects.forEach(p => {
+        p.drafts.forEach(d => allDrafts.push({ project: p, draft: d }));
+      });
+
+      const recentEl = document.getElementById('recent-list');
+      recentEl.innerHTML = allDrafts.slice(0, 3).map(item => `
+        <div onclick="openDraftInEditor('${item.project.id}', '${item.draft.id}')"
+          class="liquid-glass rounded-2xl p-4 cursor-pointer hover:scale-[1.01] transition flex flex-col justify-between gap-3">
+          <div class="flex items-start justify-between">
+            <div class="flex items-center gap-2">
+              <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 text-xs font-bold">${item.draft.version}</span>
+              <span class="text-xs font-semibold text-slate-400 truncate">${item.project.name}</span>
+            </div>
+            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-slate-900 text-sm">${item.draft.title}</h3>
+            <p class="text-xs text-slate-500 line-clamp-1 mt-1 font-mono">${escapeHtml(item.draft.blocks[0]?.text || 'Empty script')}</p>
+          </div>
+          <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-200/60">
+            <span>Edited @ ${item.draft.lastSaved}</span>
+            <span>${item.draft.blocks.length} lines</span>
+          </div>
+        </div>
+      `).join('');
+
+      const folderEl = document.getElementById('project-folders-list');
+      folderEl.innerHTML = state.projects.map(p => `
+        <div onclick="selectProjectFolder('${p.id}')"
+          class="liquid-glass rounded-2xl p-4 cursor-pointer transition flex items-center justify-between ${p.id === activeProj.id ? 'ring-2 ring-blue-500/80 bg-white/90' : 'hover:bg-white/80'}">
+          <div class="flex items-center gap-3.5">
+            <div class="w-10 h-10 rounded-2xl ${p.id === activeProj.id ? 'bg-blue-600 text-white' : 'bg-blue-500/10 text-blue-600'} flex items-center justify-center">
+              <i data-lucide="folder" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h4 class="font-bold text-sm text-slate-900">${p.name}</h4>
+              <p class="text-xs text-slate-500">${p.category} • ${p.drafts.length} Draft</p>
+            </div>
+          </div>
+          <span class="text-[11px] text-slate-400">${p.updatedAt}</span>
+        </div>
+      `).join('');
+
+      const draftsEl = document.getElementById('project-drafts-list');
+      draftsEl.innerHTML = activeProj.drafts.map(d => `
+        <div class="liquid-glass rounded-2xl p-4 flex items-center justify-between hover:bg-white/90 transition">
+          <div class="flex items-center gap-3">
+            <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800">${d.version}</span>
+            <div>
+              <h4 class="font-bold text-sm text-slate-900">${d.title}</h4>
+              <p class="text-xs text-slate-500">By ${d.author} • Created ${d.createdAt} • Last Saved ${d.lastSaved}</p>
+            </div>
+          </div>
+          <button onclick="openDraftInEditor('${activeProj.id}', '${d.id}')"
+            class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition">
+            Buka Script
+          </button>
+        </div>
+      `).join('');
+
+      lucide.createIcons();
+    }
+
+    function selectProjectFolder(projId) {
+      state.activeProjectId = projId;
+      const proj = getActiveProject();
+      state.activeDraftId = proj.drafts[0].id;
+      saveState();
+      renderLanding();
+    }
+
+    function selectDraft(projId, draftId) {
+      state.activeProjectId = projId;
+      state.activeDraftId = draftId;
+      saveState();
+      renderEditor();
+      lucide.createIcons();
+    }
+
+    function openDraftInEditor(projId, draftId) {
+      state.activeProjectId = projId;
+      state.activeDraftId = draftId;
+      saveState();
+      switchView('editor');
+    }
+
+    function openNewProjectModal() {
+      const name = prompt('Nama Folder Project Baru (contoh: MV - Lagu Baru / Short Film):');
+      if (!name || !name.trim()) return;
+      const newProjId = 'proj_' + Date.now();
+      const newDraftId = 'draft_' + Date.now();
+      state.projects.unshift({
+        id: newProjId,
+        name: name.trim(),
+        category: 'Film / Video Production',
+        updatedAt: 'Just now',
+        drafts: [
+          {
+            id: newDraftId,
+            version: 'v1',
+            title: name.trim().toUpperCase(),
+            author: 'Alfin Radidtya',
+            createdAt: 'Today',
+            lastSaved: 'Just now',
+            synced: false,
+            blocks: [
+              { id: 'b_' + Date.now(), type: 'scene', text: '' }
+            ]
+          }
+        ]
+      });
+      state.activeProjectId = newProjId;
+      state.activeDraftId = newDraftId;
+      saveState();
+      renderLanding();
+      showToast(`Folder project "${name}" berhasil dibuat!`);
+    }
+
+    function createNewDraftInActiveProject() {
+      const proj = getActiveProject();
+      const num = proj.drafts.length + 1;
+      const title = prompt('Judul Draft Script Baru:', `${proj.name.toUpperCase()} - DRAFT ${num}`);
+      if (!title) return;
+      const firstBlockId = 'b_' + Date.now();
+      const newDraft = {
+        id: 'draft_' + Date.now(),
+        version: 'v' + num,
+        title: title.trim().toUpperCase(),
+        author: 'Alfin Radidtya',
+        createdAt: 'Today',
+        lastSaved: 'Just now',
+        synced: false,
+        blocks: [
+          { id: firstBlockId, type: 'scene', text: '' }
+        ]
+      };
+      proj.drafts.unshift(newDraft);
+      state.activeDraftId = newDraft.id;
+      state.activeBlockId = firstBlockId;
+      saveState();
+      switchView('editor');
+      focusBlock(firstBlockId, 0);
+      showToast(`Draft "${newDraft.title}" berhasil dibuat!`);
+    }
+
+    function exportBackupJSON() {
+      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'mourise-studio-scripts-backup.json';
+      a.click();
+      showToast('Backup JSON berhasil diunduh');
+    }
+
+    function showToast(msg) {
+      const t = document.getElementById('toast');
+      document.getElementById('toast-msg').textContent = msg;
+      t.classList.remove('hidden');
+      setTimeout(() => t.classList.add('hidden'), 3000);
+    }
+
+    // Tutup pop-up autocomplete jika klik di luar kertas
+    document.addEventListener('mousedown', (e) => {
+      const popup = document.getElementById('autocomplete-popup');
+      if (popup && !popup.contains(e.target)) {
+        hideAutocomplete();
+      }
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      renderEditor();
+      lucide.createIcons();
+    });
+  </script>
+</body>
+</html>
