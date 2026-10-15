@@ -51,15 +51,20 @@
 
     /* ==========================================================
        SINGLE CONTINUOUS SCREENPLAY DOCUMENT (MENGALIR SEPERTI WORD)
+       Fix: flex-shrink: 0 & height: auto agar kertas selalu memanjang
+       mengikuti panjang teks dan tidak pernah terpotong!
        ========================================================== */
     .screenplay-sheet {
       font-family: var(--font-script);
       width: 816px;
       min-height: 1056px;
+      height: auto;
+      flex-shrink: 0;
       background: #ffffff;
       box-shadow: 0 20px 50px rgba(15, 23, 42, 0.07), 0 1px 3px rgba(15, 23, 42, 0.04);
       border: 1px solid rgba(226, 232, 240, 0.85);
-      padding: 72px 72px 140px 96px;
+      padding: 72px 72px 160px 96px;
+      margin-bottom: 80px;
       font-size: 12pt;
       line-height: 1.32;
       color: #111827;
@@ -221,6 +226,9 @@
 </head>
 <body class="flex select-none">
 
+  <!-- HIDDEN FILE INPUT UNTUK IMPORT / RESTORE BACKUP JSON -->
+  <input type="file" id="import-backup-input" accept=".json" class="hidden" onchange="handleImportBackupFile(event)" />
+
   <!-- AUTOCOMPLETE POPUP (100% Dynamic StudioBinder Engine) -->
   <div id="autocomplete-popup" class="hidden no-print">
     <div id="autocomplete-header" class="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-slate-400 border-b border-slate-100 flex items-center justify-between">
@@ -246,18 +254,21 @@
           <i data-lucide="folder-kanban" class="w-4 h-4"></i>
           <span class="text-[10px] font-medium">Projects</span>
         </button>
-        <button onclick="switchView('editor')" id="nav-editor" class="flex flex-col items-center gap-1 p-2 rounded-xl text-blue-600 bg-white shadow-sm transition">
+        <button onclick="switchView('editor')" id="nav-editor" class="flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition">
           <i data-lucide="file-text" class="w-4 h-4"></i>
           <span class="text-[10px] font-semibold">Script</span>
         </button>
       </nav>
     </div>
 
-    <div class="flex flex-col items-center gap-3">
-      <button onclick="exportBackupJSON()" title="Backup JSON untuk Git" class="p-2.5 rounded-xl text-slate-500 hover:text-slate-900 hover:bg-white/70 transition">
+    <div class="flex flex-col items-center gap-2">
+      <button onclick="exportBackupJSON()" title="Export Semua Backup (.json)" class="p-2.5 rounded-xl text-slate-500 hover:text-blue-600 hover:bg-white/70 transition">
         <i data-lucide="download" class="w-4 h-4"></i>
       </button>
-      <div class="text-[9px] text-slate-400 text-center leading-tight px-1">
+      <button onclick="triggerImportBackup()" title="Import / Restore Backup (.json)" class="p-2.5 rounded-xl text-slate-500 hover:text-emerald-600 hover:bg-white/70 transition">
+        <i data-lucide="upload" class="w-4 h-4"></i>
+      </button>
+      <div class="text-[9px] text-slate-400 text-center leading-tight px-1 mt-1">
         Mourise<br/>Studio
       </div>
     </div>
@@ -301,6 +312,10 @@
       </div>
 
       <div class="flex items-center gap-2.5">
+        <button onclick="exportSingleScriptBackup()" class="liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium text-slate-700 flex items-center gap-1.5" title="Export Backup Script yang sedang dibuka">
+          <i data-lucide="file-down" class="w-3.5 h-3.5 text-emerald-600"></i>
+          <span class="hidden sm:inline">Backup Script</span>
+        </button>
         <button onclick="switchView('landing')" class="liquid-pill px-3 py-1.5 rounded-xl text-xs font-medium text-slate-700 flex items-center gap-1.5">
           <i data-lucide="folder-open" class="w-3.5 h-3.5 text-blue-600"></i>
           <span>Folders & Recent</span>
@@ -320,17 +335,26 @@
     <!-- ========================================================= -->
     <!-- VIEW 1: LANDING PAGE (PROJECT FOLDERS, DRAFTS, & RECENT) -->
     <!-- ========================================================= -->
-    <main id="view-landing" class="hidden flex-1 overflow-y-auto p-6 md:p-10 space-y-8 select-text">
-      <div class="liquid-glass rounded-3xl p-6 md:p-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+    <main id="view-landing" class="flex-1 overflow-y-auto p-6 md:p-10 space-y-8 select-text">
+      <div class="liquid-glass rounded-3xl p-6 md:p-8 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
         <div>
           <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 text-blue-600 text-xs font-semibold mb-2">
             <span class="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>
             Mourise Studio — Liquid Apple Workspace
           </div>
           <h1 class="text-2xl md:text-3xl font-bold text-slate-900 tracking-tight">Project Folders & Screenplay Drafts</h1>
-          <p class="text-sm text-slate-500 mt-1">Kelola folder produksi film/MV, versi draft skenario, dan naskah yang terakhir diedit.</p>
+          <p class="text-sm text-slate-500 mt-1">Kelola folder produksi film/MV, versi draft skenario, serta fitur Export & Import Backup JSON saat update web.</p>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex flex-wrap items-center gap-2.5">
+          <!-- Tombol Export & Import Backup untuk kemudahan update web di Git -->
+          <button onclick="exportBackupJSON()" class="liquid-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 flex items-center gap-2" title="Download seluruh folder & script (.json)">
+            <i data-lucide="download" class="w-4 h-4 text-emerald-600"></i>
+            <span>Export Backup</span>
+          </button>
+          <button onclick="triggerImportBackup()" class="liquid-pill px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-700 flex items-center gap-2" title="Restore file backup (.json) dari komputer">
+            <i data-lucide="upload" class="w-4 h-4 text-amber-600"></i>
+            <span>Import Backup</span>
+          </button>
           <button onclick="openNewProjectModal()" class="liquid-pill px-4 py-2.5 rounded-2xl text-xs font-semibold text-slate-800 flex items-center gap-2">
             <i data-lucide="folder-plus" class="w-4 h-4 text-blue-600"></i>
             <span>Folder Project Baru</span>
@@ -377,7 +401,7 @@
     <!-- ========================================================= -->
     <!-- VIEW 2: SCREENPLAY EDITOR (STUDIOBINDER DYNAMIC LOGIC)    -->
     <!-- ========================================================= -->
-    <div id="view-editor" class="flex-1 flex flex-col overflow-hidden">
+    <div id="view-editor" class="hidden flex-1 flex flex-col overflow-hidden">
 
       <!-- SCRIPT FORMATTING TOOLBAR -->
       <div class="no-print h-12 liquid-glass-subtle px-5 flex items-center justify-between border-b border-white/80 z-10">
@@ -418,8 +442,13 @@
           </button>
         </div>
 
-        <!-- Right: Enter Behavior Mode & Sync -->
+        <!-- Right: Auto-Format Repair, Enter Mode & Sync -->
         <div class="flex items-center gap-2">
+          <button onclick="autoFormatEntireScript()" title="Rapikan otomatis baris Scene, Karakter, Dialog & CUT TO di seluruh naskah"
+            class="liquid-pill px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-emerald-600 flex items-center gap-1">
+            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i>
+            <span class="hidden lg:inline">Auto-Rapikan</span>
+          </button>
           <button id="enter-mode-btn" onclick="toggleEnterSceneMode()" title="Ubah fungsi tombol Enter saat menulis Action"
             class="liquid-pill px-2.5 py-1.5 rounded-xl text-[11px] font-semibold text-blue-600 flex items-center gap-1.5">
             <i data-lucide="corner-down-left" class="w-3.5 h-3.5"></i>
@@ -454,7 +483,7 @@
               <div id="scenes-sidebar-list" class="space-y-1 max-h-44 overflow-y-auto"></div>
             </div>
 
-            <!-- Dynamic Indexed Locations & Characters in This Script -->
+            <!-- Dynamic Indexed Locations in This Script -->
             <div class="pt-2 border-t border-slate-200/70 space-y-2">
               <div class="text-[11px] font-bold text-slate-700 flex items-center justify-between">
                 <span>Lokasi di Naskah Ini</span>
@@ -481,7 +510,7 @@
         <div id="editor-scroll-container" class="flex-1 overflow-y-auto p-6 md:p-10 flex flex-col items-center space-y-4 select-text" onscroll="hideAutocomplete()">
 
           <!-- Unsynced Changes Banner -->
-          <div id="unsynced-banner" class="no-print w-full max-w-[816px] rounded-xl bg-amber-50/90 border border-amber-200/80 px-4 py-2.5 flex items-center justify-between text-xs text-amber-900 shadow-sm">
+          <div id="unsynced-banner" class="no-print w-full max-w-[816px] flex-shrink-0 rounded-xl bg-amber-50/90 border border-amber-200/80 px-4 py-2.5 flex items-center justify-between text-xs text-amber-900 shadow-sm">
             <div class="flex items-center gap-2">
               <i data-lucide="info" class="w-4 h-4 text-amber-600"></i>
               <span><strong>Unsynced Changes:</strong> <span id="unsynced-text">This revision was generated on Oct 15 @ 2:57pm, but has not been synced to the project yet.</span></span>
@@ -492,7 +521,7 @@
           </div>
 
           <!-- Author Metadata Card -->
-          <div class="no-print w-full max-w-[816px] liquid-glass rounded-xl px-5 py-3 flex items-center justify-between text-xs text-slate-600">
+          <div class="no-print w-full max-w-[816px] flex-shrink-0 liquid-glass rounded-xl px-5 py-3 flex items-center justify-between text-xs text-slate-600">
             <div class="flex items-center gap-3">
               <span id="meta-rev-badge" class="px-2 py-0.5 rounded bg-slate-100 border border-slate-200 font-semibold text-slate-700">v1</span>
               <span><strong id="meta-script-title" class="text-slate-900">MV - NERDOS BAND</strong> was generated by <strong class="text-slate-900">Alfin Radidtya</strong> <span id="meta-date">on May 21 @ 5:20pm</span></span>
@@ -503,12 +532,15 @@
           </div>
 
           <!-- ========================================================== -->
-          <!-- SATU DOKUMEN CONTENTEDITABLE UTUH (TIDAK TERPISAH-PISAH)   -->
+          <!-- SATU DOKUMEN CONTENTEDITABLE UTUH (TIDAK PERNAH TERPOTONG) -->
           <!-- ========================================================== -->
           <div id="screenplay-sheet"
                class="screenplay-sheet rounded-sm"
                contenteditable="true"
-               spellcheck="false"></div>
+               spellcheck="false"
+               autocapitalize="off"
+               autocorrect="off"
+               autocomplete="off"></div>
 
         </div>
       </div>
@@ -546,6 +578,7 @@
     ];
 
     const DEFAULT_STATE = {
+      currentView: 'landing', // Buka awal di Landing Page, dan akan selalu diingat saat refresh
       activeProjectId: 'proj-1',
       activeDraftId: 'draft-1',
       enterCreatesScene: true,
@@ -635,11 +668,15 @@
 
     const TYPE_CYCLE = ['scene', 'action', 'character', 'parenthetical', 'dialogue', 'transition', 'insert'];
 
-    // Standar StudioBinder Time of Day & Transitions
+    // Standar StudioBinder Time of Day & Bahasa Indonesia (PAGI, SIANG, SORE, MALAM)
     const STUDIOBINDER_TIMES = [
       { label: 'DAY', desc: 'Siang Hari' },
       { label: 'NIGHT', desc: 'Malam Hari' },
       { label: 'MORNING', desc: 'Pagi Hari' },
+      { label: 'PAGI', desc: 'Pagi Hari (ID)' },
+      { label: 'SIANG', desc: 'Siang Hari (ID)' },
+      { label: 'SORE', desc: 'Sore Hari (ID)' },
+      { label: 'MALAM', desc: 'Malam Hari (ID)' },
       { label: 'AFTERNOON', desc: 'Sore Hari' },
       { label: 'EVENING', desc: 'Petang / Malam Awal' },
       { label: 'DUSK', desc: 'Senja' },
@@ -675,16 +712,24 @@
         if (!raw) return JSON.parse(JSON.stringify(DEFAULT_STATE));
         const parsed = JSON.parse(raw);
         if (typeof parsed.enterCreatesScene === 'undefined') parsed.enterCreatesScene = true;
+        if (!parsed.currentView) parsed.currentView = 'landing';
+        if (!Array.isArray(parsed.projects) || parsed.projects.length === 0) {
+          parsed.projects = JSON.parse(JSON.stringify(DEFAULT_STATE.projects));
+        }
         return parsed;
       } catch (e) {
         return JSON.parse(JSON.stringify(DEFAULT_STATE));
       }
     }
 
+    function saveStateToStorage() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
     function saveStateFromDOM() {
       const sheet = document.getElementById('screenplay-sheet');
       const draft = getActiveDraft();
-      if (sheet && draft) {
+      if (sheet && draft && sheet.children.length > 0) {
         const paragraphs = Array.from(sheet.querySelectorAll('p'));
         draft.blocks = paragraphs.map(p => ({
           type: p.getAttribute('data-type') || 'action',
@@ -696,7 +741,7 @@
         const lbl = document.getElementById('last-saved-label');
         if (lbl) lbl.textContent = `Last Saved @ ${timeStr}`;
       }
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStateToStorage();
       refreshScenesSidebarOnly();
     }
 
@@ -706,7 +751,58 @@
 
     function getActiveDraft() {
       const proj = getActiveProject();
+      if (!proj) return null;
       return proj.drafts.find(d => d.id === state.activeDraftId) || proj.drafts[0];
+    }
+
+    // ==========================================================
+    // SMART LINE CLASSIFIER (Untuk Paste Naskah & Auto-Rapikan)
+    // ==========================================================
+    function classifyScreenplayLine(rawLine, prevType) {
+      const line = (rawLine || '').trim();
+      if (!line) return 'action';
+
+      // 1. Scene Heading (INT. / EXT. / I/E.)
+      if (/^(?:INT\.\/EXT\.|I\/E\.|INT\.|EXT\.)\s+/i.test(line)) {
+        return 'scene';
+      }
+      // 2. Transition (CUT TO:, DISSOLVE TO:, FADE OUT.)
+      if (/^(?:CUT TO:|DISSOLVE TO:|SMASH CUT TO:|MATCH CUT TO:|JUMP CUT TO:|FADE IN:|FADE OUT\.|FADE TO BLACK\.)$/i.test(line)) {
+        return 'transition';
+      }
+      // 3. Insert / SFX
+      if (/^(?:INSERT\s*[-–:]|SFX\s*:)/i.test(line)) {
+        return 'insert';
+      }
+      // 4. Parenthetical
+      if (/^\(.*\)$/.test(line)) {
+        return 'parenthetical';
+      }
+      // 5. Character (Huruf kapital semua, pendek <= 38 karakter, tidak diakhiri titik kalimat)
+      const isAllCaps = line === line.toUpperCase() && /[A-Z]/.test(line);
+      if (isAllCaps && line.length <= 38 && !/[.!?]$/.test(line.replace(/\(V\.O\.\)|\(O\.S\.\)/gi, '').trim())) {
+        return 'character';
+      }
+      // 6. Jika baris sebelumnya adalah Character atau Parenthetical, maka baris ini otomatis Dialogue!
+      if (prevType === 'character' || prevType === 'parenthetical') {
+        return 'dialogue';
+      }
+      return 'action';
+    }
+
+    function autoFormatEntireScript() {
+      const sheet = document.getElementById('screenplay-sheet');
+      if (!sheet) return;
+      const paragraphs = Array.from(sheet.querySelectorAll('p'));
+      let prevType = 'action';
+      paragraphs.forEach(p => {
+        const text = p.innerText.replace(/\n$/, '');
+        const detectedType = classifyScreenplayLine(text, prevType);
+        decorateParagraph(p, detectedType);
+        prevType = detectedType;
+      });
+      saveStateFromDOM();
+      showToast('Seluruh format Scene, Karakter, Dialog & Transisi berhasil dirapikan!');
     }
 
     // ==========================================================
@@ -861,21 +957,16 @@
 
     // ==========================================================
     // MURNI DYNAMIC INDEXING STUDIOBINDER (TANPA HARDCODE!)
-    // Hanya mengambil Lokasi & Karakter dari baris LAIN yang sudah diketik di naskah
     // ==========================================================
     function extractPureLocationFromSceneHeading(sceneText) {
       const upper = (sceneText || '').toUpperCase().trim();
-      // Pastikan diawali INT. / EXT. / INT./EXT. / I/E.
       const prefixMatch = upper.match(/^(INT\.\/EXT\.|I\/E\.|INT\.|EXT\.)\s+(.+)$/);
       if (!prefixMatch) return null;
 
       let rest = prefixMatch[2].trim();
-      // Buang bagian Time of Day di belakang (misal "- DAY", ". DAY", "– NIGHT")
       const timeWordsPattern = STUDIOBINDER_TIMES.map(t => t.label).join('|');
       const stripTimeRegex = new RegExp(`(\\s*[-–.]\\s*(${timeWordsPattern}))$`, 'i');
       rest = rest.replace(stripTimeRegex, '').trim();
-
-      // Jika diakhiri tanda strip atau titik gantung, bersihkan
       rest = rest.replace(/[-–.\s]+$/, '').trim();
 
       return rest.length >= 2 ? rest : null;
@@ -887,7 +978,7 @@
       if (!sheet) return [];
 
       sheet.querySelectorAll('p[data-type="scene"]').forEach(p => {
-        if (p === excludeParagraph) return; // Jangan ambil dari baris yang sedang diketik saat ini
+        if (p === excludeParagraph) return;
         const loc = extractPureLocationFromSceneHeading(p.innerText);
         if (loc) locs.add(loc);
       });
@@ -902,7 +993,6 @@
 
       sheet.querySelectorAll('p[data-type="character"]').forEach(p => {
         if (p === excludeParagraph) return;
-        // Ambil nama karakter murni tanpa ekstensi (V.O.) / (O.S.)
         const raw = p.innerText.toUpperCase().replace(/\s*\(.*?\)\s*$/, '').trim();
         if (raw.length >= 2) chars.add(raw);
       });
@@ -921,11 +1011,8 @@
       let suggestions = [];
       let headerTitle = 'StudioBinder Smart Suggest';
 
-      // ----------------------------------------------------------
-      // 1. LOGIKA SCENE HEADING (Persis StudioBinder)
-      // ----------------------------------------------------------
+      // 1. LOGIKA SCENE HEADING
       if (type === 'scene') {
-        // TAHAP A: Belum ada prefix INT. / EXT. -> Hanya muncul jika user mulai mengetik I atau E
         if (!/^(INT\.|EXT\.|INT\.\/EXT\.|I\/E\.)(\s|$)/.test(upper)) {
           const clean = upper.trim();
           if (clean.length > 0) {
@@ -939,15 +1026,11 @@
             headerTitle = 'Scene Setting (INT. / EXT.)';
           }
         }
-
-        // TAHAP B: User sudah mengetik lokasi lalu mengetik pemisah waktu " - " atau ". "
-        // Contoh: "INT. GEDUNG FAKULTAS - " atau "INT. GEDUNG FAKULTAS. "
         else if (/^(?:INT\.\/EXT\.|I\/E\.|INT\.|EXT\.)\s+[^.\-–]+(\s+[-–]\s*|\.\s+)([A-Z]*)$/.test(upper)) {
           const matchTime = upper.match(/^(?:INT\.\/EXT\.|I\/E\.|INT\.|EXT\.)\s+([^.\-–]+)(\s+[-–]\s*|\.\s+)([A-Z]*)$/);
           if (matchTime) {
             const partialTime = (matchTime[3] || '').trim();
             const baseBeforeTime = upper.slice(0, upper.length - partialTime.length);
-            // Normalisasi spasi setelah pemisah
             const normalizedBase = baseBeforeTime.endsWith(' ') ? baseBeforeTime : baseBeforeTime + ' ';
 
             suggestions = STUDIOBINDER_TIMES
@@ -960,9 +1043,6 @@
             headerTitle = 'Time of Day (Waktu)';
           }
         }
-
-        // TAHAP C: User baru selesai memilih "INT. " atau sedang mengetik nama lokasi
-        // HANYA munculkan lokasi yang SUDAH PERNAH dipakai di scene lain pada naskah ini!
         else {
           const matchLoc = upper.match(/^(INT\.\/EXT\.|I\/E\.|INT\.|EXT\.)\s+([A-Z0-9\s/']*)$/);
           if (matchLoc) {
@@ -973,18 +1053,16 @@
             suggestions = usedLocations
               .filter(loc => (partialLoc === '' || loc.startsWith(partialLoc)) && loc !== partialLoc)
               .map(loc => ({
-                label: loc, // Tampilkan nama lokasinya saja seperti di StudioBinder
+                label: loc,
                 desc: 'Lokasi Sebelumnya',
-                value: `${prefix}${loc} - ` // Langsung siapkan " - " agar lanjut pilih DAY/NIGHT!
+                value: `${prefix}${loc} - `
               }));
             headerTitle = 'Lokasi dari Scene Sebelumnya';
           }
         }
       }
 
-      // ----------------------------------------------------------
-      // 2. LOGIKA DI BARIS ACTION: Jika mengetik "int" atau "ext" di awal baris kosong
-      // ----------------------------------------------------------
+      // 2. LOGIKA DI BARIS ACTION
       else if (type === 'action' && rawText.trim().length >= 1 && rawText.trim().length <= 4) {
         const clean = upper.trim();
         if (('INT.'.startsWith(clean) || 'EXT.'.startsWith(clean)) && /^[IE]/i.test(clean)) {
@@ -996,14 +1074,11 @@
         }
       }
 
-      // ----------------------------------------------------------
-      // 3. LOGIKA CHARACTER: Hanya munculkan karakter yang sudah pernah ditulis di naskah ini
-      // ----------------------------------------------------------
+      // 3. LOGIKA CHARACTER
       else if (type === 'character') {
         const clean = upper.trim();
         const usedChars = getUsedCharactersInScript(p);
 
-        // Jika sedang mengetik ekstensi "(" setelah nama karakter -> Tawarkan (V.O.), (O.S.), (CONT'D)
         if (clean.includes('(')) {
           const [charName, extPart] = clean.split('(');
           const cleanName = charName.trim();
@@ -1033,9 +1108,7 @@
         }
       }
 
-      // ----------------------------------------------------------
       // 4. LOGIKA TRANSITION
-      // ----------------------------------------------------------
       else if (type === 'transition') {
         const clean = upper.trim();
         suggestions = STUDIOBINDER_TRANSITIONS
@@ -1097,8 +1170,6 @@
       setCursorInParagraph(p, 'end');
       saveStateFromDOM();
 
-      // Jika value diakhiri spasi (misal habis pilih "INT. " atau habis pilih lokasi "INT. GEDUNG FAKULTAS - "),
-      // evaluasi tahap berikutnya secara otomatis (StudioBinder Chained Autocomplete)
       if (item.value.endsWith(' ')) {
         setTimeout(() => evaluateAutocomplete(p), 20);
       }
@@ -1111,7 +1182,7 @@
     }
 
     // ==========================================================
-    // CONTINUOUS SHEET EVENT LISTENERS
+    // CONTINUOUS SHEET EVENT LISTENERS (TERMASUK SMART PASTE)
     // ==========================================================
     function setupSheetEvents() {
       const sheet = document.getElementById('screenplay-sheet');
@@ -1122,12 +1193,75 @@
         }
       });
 
+      // Smart Paste Handler: Saat user paste banyak baris naskah, otomatis pecah menjadi <p> dengan format Scene, Karakter, Dialog, & Transisi yang tepat!
+      sheet.addEventListener('paste', (e) => {
+        e.preventDefault();
+        hideAutocomplete();
+        const plainText = (e.clipboardData || window.clipboardData).getData('text/plain');
+        if (!plainText) return;
+
+        const lines = plainText.split(/\r?\n/).map(l => l.trim()).filter((l, idx, arr) => l.length > 0 || arr.length === 1);
+        if (lines.length === 0) return;
+
+        let currentP = getCurrentParagraph();
+        if (!currentP) {
+          currentP = createParagraphElement('action', '');
+          sheet.appendChild(currentP);
+        }
+
+        // Jika hanya paste 1 potongan teks pendek di baris yang sedang diketik
+        if (lines.length === 1) {
+          document.execCommand('insertText', false, lines[0]);
+          const txt = currentP.innerText.replace(/\n$/, '');
+          const prevP = currentP.previousElementSibling;
+          const prevType = prevP ? prevP.getAttribute('data-type') : 'action';
+          const autoType = classifyScreenplayLine(txt, prevType);
+          if (autoType !== 'action' || currentP.getAttribute('data-type') === 'action') {
+            decorateParagraph(currentP, autoType);
+          }
+          saveStateFromDOM();
+          return;
+        }
+
+        // Jika paste banyak baris skenario sekaligus
+        let prevType = currentP.previousElementSibling
+          ? (currentP.previousElementSibling.getAttribute('data-type') || 'action')
+          : 'action';
+
+        let anchorP = currentP;
+        lines.forEach((lineText, idx) => {
+          const detectedType = classifyScreenplayLine(lineText, prevType);
+          if (idx === 0 && anchorP.innerText.trim() === '') {
+            decorateParagraph(anchorP, detectedType);
+            anchorP.textContent = lineText;
+            updateEmptyClass(anchorP);
+          } else {
+            const newP = createParagraphElement(detectedType, lineText);
+            anchorP.insertAdjacentElement('afterend', newP);
+            anchorP = newP;
+          }
+          prevType = detectedType;
+        });
+
+        setCursorInParagraph(anchorP, 'end');
+        document.getElementById('unsynced-banner').classList.remove('hidden');
+        saveStateFromDOM();
+      });
+
       sheet.addEventListener('input', () => {
         if (sheet.children.length === 0) {
           const p = createParagraphElement('scene', '');
           sheet.appendChild(p);
           setCursorInParagraph(p, 'start');
         }
+
+        // Konversi tag <div> atau <br> liar jika ada menjadi <p> standar
+        Array.from(sheet.children).forEach(child => {
+          if (child.nodeName !== 'P') {
+            const p = createParagraphElement('action', child.innerText || '');
+            sheet.replaceChild(p, child);
+          }
+        });
 
         const p = getCurrentParagraph();
         if (p) {
@@ -1142,9 +1276,14 @@
             setCursorInParagraph(p, 1);
           }
           // Auto-transition jika ketik "CUT TO:"
-          else if (type === 'action' && /^(CUT TO:|DISSOLVE TO:|FADE OUT\.)$/i.test(txt.trim())) {
+          else if (type === 'action' && /^(CUT TO:|DISSOLVE TO:|FADE OUT\.|SMASH CUT TO:)$/i.test(txt.trim())) {
             decorateParagraph(p, 'transition');
             p.textContent = txt.trim().toUpperCase();
+            setCursorInParagraph(p, 'end');
+          }
+          // Auto-scene jika mengetik lengkap "INT. ..." atau "EXT. ..." di baris Action
+          else if (type === 'action' && /^(INT\.\/EXT\.|I\/E\.|INT\.|EXT\.)\s+/i.test(txt.trim())) {
+            decorateParagraph(p, 'scene');
             setCursorInParagraph(p, 'end');
           }
 
@@ -1188,7 +1327,7 @@
         const currentType = p.getAttribute('data-type') || 'action';
         const fullText = p.innerText.replace(/\n$/, '');
 
-        // 2. Tombol TAB: Alur StudioBinder (Action -> Character -> Parenthetical -> Dialogue)
+        // 2. Tombol TAB: Alur StudioBinder
         if (e.key === 'Tab') {
           e.preventDefault();
           hideAutocomplete();
@@ -1234,7 +1373,6 @@
           e.preventDefault();
           hideAutocomplete();
 
-          // Jika baris kosong ditekan Enter lagi -> toggle antara Scene <-> Action
           if (fullText.trim() === '') {
             const toggledType = currentType === 'scene' ? 'action' : 'scene';
             decorateParagraph(p, toggledType);
@@ -1283,6 +1421,7 @@
     function renderEditor() {
       const proj = getActiveProject();
       const draft = getActiveDraft();
+      if (!proj || !draft) return;
 
       document.getElementById('header-project-name').textContent = proj.name;
       document.getElementById('active-rev-badge').textContent = draft.version;
@@ -1334,7 +1473,6 @@
         `;
       }).join('');
 
-      // Update daftar lokasi yang terdeteksi secara dinamis di naskah ini
       const dynamicLocs = getUsedLocationsInScript(null);
       if (locCountEl) locCountEl.textContent = dynamicLocs.length;
       if (locBadgesEl) {
@@ -1387,7 +1525,7 @@
       };
       proj.drafts.unshift(newDraft);
       state.activeDraftId = newDraft.id;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStateToStorage();
       renderEditor();
       showToast(`Revisi baru ${newDraft.version} berhasil dibuat`);
     }
@@ -1408,14 +1546,34 @@
     }
 
     // ==========================================================
-    // LANDING PAGE LOGIC (FOLDERS, DRAFTS, & RECENT)
+    // LANDING PAGE LOGIC (PERSISTENT VIEW, DELETE FOLDER/SCRIPT, BACKUP)
     // ==========================================================
-    function switchView(view) {
+    function updateNavRailHighlight(view) {
+      const navHome = document.getElementById('nav-home');
+      const navEditor = document.getElementById('nav-editor');
+      if (view === 'landing') {
+        navHome.className = 'flex flex-col items-center gap-1 p-2 rounded-xl text-blue-600 bg-white shadow-sm transition';
+        navEditor.className = 'flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition';
+      } else {
+        navEditor.className = 'flex flex-col items-center gap-1 p-2 rounded-xl text-blue-600 bg-white shadow-sm transition';
+        navHome.className = 'flex flex-col items-center gap-1 p-2 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-white/70 transition';
+      }
+    }
+
+    function switchView(view, skipSaveDOM = false) {
       hideAutocomplete();
       const landing = document.getElementById('view-landing');
       const editor = document.getElementById('view-editor');
-      if (view === 'landing') {
+
+      if (!skipSaveDOM && state.currentView === 'editor') {
         saveStateFromDOM();
+      }
+
+      state.currentView = view;
+      saveStateToStorage();
+      updateNavRailHighlight(view);
+
+      if (view === 'landing') {
         landing.classList.remove('hidden');
         editor.classList.add('hidden');
         renderLanding();
@@ -1429,6 +1587,7 @@
 
     function renderLanding() {
       const activeProj = getActiveProject();
+      if (!activeProj) return;
       document.getElementById('selected-folder-title').textContent = activeProj.name;
 
       const allDrafts = [];
@@ -1441,14 +1600,21 @@
         <div onclick="openDraftInEditor('${item.project.id}', '${item.draft.id}')"
           class="liquid-glass rounded-2xl p-4 cursor-pointer hover:scale-[1.01] transition flex flex-col justify-between gap-3">
           <div class="flex items-start justify-between">
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 truncate">
               <span class="px-2 py-0.5 rounded-md bg-blue-500/10 text-blue-600 text-xs font-bold">${item.draft.version}</span>
-              <span class="text-xs font-semibold text-slate-400 truncate">${item.project.name}</span>
+              <span class="text-xs font-semibold text-slate-400 truncate">${escapeHtml(item.project.name)}</span>
             </div>
-            <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+            <div class="flex items-center gap-1">
+              <button onclick="event.stopPropagation(); deleteDraftScript('${item.project.id}', '${item.draft.id}')"
+                title="Hapus Script Ini"
+                class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition">
+                <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              </button>
+              <i data-lucide="arrow-up-right" class="w-4 h-4 text-slate-400"></i>
+            </div>
           </div>
           <div>
-            <h3 class="font-bold text-slate-900 text-sm">${item.draft.title}</h3>
+            <h3 class="font-bold text-slate-900 text-sm">${escapeHtml(item.draft.title)}</h3>
             <p class="text-xs text-slate-500 line-clamp-1 mt-1 font-mono">${escapeHtml(item.draft.blocks[0]?.text || 'Empty script')}</p>
           </div>
           <div class="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-200/60">
@@ -1462,51 +1628,128 @@
       folderEl.innerHTML = state.projects.map(p => `
         <div onclick="selectProjectFolder('${p.id}')"
           class="liquid-glass rounded-2xl p-4 cursor-pointer transition flex items-center justify-between ${p.id === activeProj.id ? 'ring-2 ring-blue-500/80 bg-white/90' : 'hover:bg-white/80'}">
-          <div class="flex items-center gap-3.5">
-            <div class="w-10 h-10 rounded-2xl ${p.id === activeProj.id ? 'bg-blue-600 text-white' : 'bg-blue-500/10 text-blue-600'} flex items-center justify-center">
+          <div class="flex items-center gap-3.5 truncate">
+            <div class="w-10 h-10 rounded-2xl flex-shrink-0 ${p.id === activeProj.id ? 'bg-blue-600 text-white' : 'bg-blue-500/10 text-blue-600'} flex items-center justify-center">
               <i data-lucide="folder" class="w-5 h-5"></i>
             </div>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900">${p.name}</h4>
-              <p class="text-xs text-slate-500">${p.category} • ${p.drafts.length} Draft</p>
+            <div class="truncate">
+              <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(p.name)}</h4>
+              <p class="text-xs text-slate-500">${escapeHtml(p.category)} • ${p.drafts.length} Draft</p>
             </div>
           </div>
-          <span class="text-[11px] text-slate-400">${p.updatedAt}</span>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <span class="text-[11px] text-slate-400 hidden sm:inline">${p.updatedAt}</span>
+            <button onclick="event.stopPropagation(); deleteProjectFolder('${p.id}')"
+              title="Hapus Folder Project"
+              class="p-1.5 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition">
+              <i data-lucide="trash-2" class="w-4 h-4"></i>
+            </button>
+          </div>
         </div>
       `).join('');
 
       const draftsEl = document.getElementById('project-drafts-list');
       draftsEl.innerHTML = activeProj.drafts.map(d => `
-        <div class="liquid-glass rounded-2xl p-4 flex items-center justify-between hover:bg-white/90 transition">
-          <div class="flex items-center gap-3">
+        <div class="liquid-glass rounded-2xl p-4 flex items-center justify-between hover:bg-white/90 transition gap-3">
+          <div class="flex items-center gap-3 truncate">
             <span class="px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200 text-xs font-bold text-slate-800">${d.version}</span>
-            <div>
-              <h4 class="font-bold text-sm text-slate-900">${d.title}</h4>
-              <p class="text-xs text-slate-500">By ${d.author} • Created ${d.createdAt} • Last Saved ${d.lastSaved}</p>
+            <div class="truncate">
+              <h4 class="font-bold text-sm text-slate-900 truncate">${escapeHtml(d.title)}</h4>
+              <p class="text-xs text-slate-500">By ${escapeHtml(d.author)} • Created ${d.createdAt} • Last Saved ${d.lastSaved}</p>
             </div>
           </div>
-          <button onclick="openDraftInEditor('${activeProj.id}', '${d.id}')"
-            class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition">
-            Buka Script
-          </button>
+          <div class="flex items-center gap-2 flex-shrink-0">
+            <button onclick="exportSpecificDraftBackup('${activeProj.id}', '${d.id}')"
+              title="Backup file script ini (.json)"
+              class="liquid-pill p-2 rounded-xl text-slate-600 hover:text-emerald-600 transition">
+              <i data-lucide="download" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="deleteDraftScript('${activeProj.id}', '${d.id}')"
+              title="Hapus Draft Script"
+              class="liquid-pill p-2 rounded-xl text-slate-500 hover:text-rose-600 hover:bg-rose-50 transition">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+            </button>
+            <button onclick="openDraftInEditor('${activeProj.id}', '${d.id}')"
+              class="px-3.5 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold shadow-sm transition">
+              Buka Script
+            </button>
+          </div>
         </div>
       `).join('');
 
       lucide.createIcons();
     }
 
+    // Fungsi Hapus Folder Project di Landing Page
+    function deleteProjectFolder(projId) {
+      const targetProj = state.projects.find(p => p.id === projId);
+      if (!targetProj) return;
+
+      if (state.projects.length <= 1) {
+        alert('Minimal harus ada 1 Folder Project di dalam workspace.');
+        return;
+      }
+
+      const ok = confirm(`Hapus folder project "${targetProj.name}" beserta seluruh (${targetProj.drafts.length}) draft script di dalamnya?`);
+      if (!ok) return;
+
+      state.projects = state.projects.filter(p => p.id !== projId);
+      if (state.activeProjectId === projId) {
+        state.activeProjectId = state.projects[0].id;
+        state.activeDraftId = state.projects[0].drafts[0]?.id || '';
+      }
+      saveStateToStorage();
+      renderLanding();
+      showToast(`Folder "${targetProj.name}" berhasil dihapus`);
+    }
+
+    // Fungsi Hapus Draft Script di Landing Page
+    function deleteDraftScript(projId, draftId) {
+      const proj = state.projects.find(p => p.id === projId);
+      if (!proj) return;
+      const draft = proj.drafts.find(d => d.id === draftId);
+      if (!draft) return;
+
+      const ok = confirm(`Hapus script "${draft.title}" (${draft.version}) dari project "${proj.name}"?`);
+      if (!ok) return;
+
+      proj.drafts = proj.drafts.filter(d => d.id !== draftId);
+
+      // Jika semua draft di folder tersebut habis, buatkan 1 draft kosong agar folder tidak rusak
+      if (proj.drafts.length === 0) {
+        proj.drafts.push({
+          id: 'draft_' + Date.now(),
+          version: 'v1',
+          title: `${proj.name.toUpperCase()} - DRAFT 1`,
+          author: 'Alfin Radidtya',
+          createdAt: 'Today',
+          lastSaved: 'Just now',
+          synced: false,
+          blocks: [{ type: 'scene', text: '' }]
+        });
+      }
+
+      if (state.activeDraftId === draftId) {
+        state.activeDraftId = proj.drafts[0].id;
+      }
+
+      saveStateToStorage();
+      renderLanding();
+      showToast(`Script "${draft.title}" berhasil dihapus`);
+    }
+
     function selectProjectFolder(projId) {
       state.activeProjectId = projId;
       const proj = getActiveProject();
       state.activeDraftId = proj.drafts[0].id;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStateToStorage();
       renderLanding();
     }
 
     function selectDraft(projId, draftId) {
       state.activeProjectId = projId;
       state.activeDraftId = draftId;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStateToStorage();
       renderEditor();
       lucide.createIcons();
     }
@@ -1514,8 +1757,8 @@
     function openDraftInEditor(projId, draftId) {
       state.activeProjectId = projId;
       state.activeDraftId = draftId;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      switchView('editor');
+      saveStateToStorage();
+      switchView('editor', true);
     }
 
     function openNewProjectModal() {
@@ -1545,7 +1788,7 @@
       });
       state.activeProjectId = newProjId;
       state.activeDraftId = newDraftId;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      saveStateToStorage();
       renderLanding();
       showToast(`Folder project "${name}" berhasil dibuat!`);
     }
@@ -1569,20 +1812,117 @@
       };
       proj.drafts.unshift(newDraft);
       state.activeDraftId = newDraft.id;
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-      switchView('editor');
+      saveStateToStorage();
+      switchView('editor', true);
       showToast(`Draft "${newDraft.title}" berhasil dibuat!`);
     }
 
+    // ==========================================================
+    // EXPORT & IMPORT BACKUP JSON (UNTUK UPDATE WEB)
+    // ==========================================================
     function exportBackupJSON() {
-      saveStateFromDOM();
-      const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+      if (state.currentView === 'editor') saveStateFromDOM();
+      const payload = {
+        backupType: 'mourise_full_workspace',
+        exportedAt: new Date().toISOString(),
+        data: state
+      };
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      const dateTag = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `mourise-studio-full-backup-${dateTag}.json`;
+      a.click();
+      showToast('Full Backup (.json) berhasil diunduh!');
+    }
+
+    function exportSingleScriptBackup() {
+      if (state.currentView === 'editor') saveStateFromDOM();
+      const proj = getActiveProject();
+      const draft = getActiveDraft();
+      if (!proj || !draft) return;
+      exportSpecificDraftBackup(proj.id, draft.id);
+    }
+
+    function exportSpecificDraftBackup(projId, draftId) {
+      const proj = state.projects.find(p => p.id === projId);
+      const draft = proj?.drafts.find(d => d.id === draftId);
+      if (!proj || !draft) return;
+
+      const payload = {
+        backupType: 'mourise_single_script',
+        exportedAt: new Date().toISOString(),
+        projectName: proj.name,
+        projectCategory: proj.category,
+        draft: draft
+      };
+      const safeName = draft.title.toLowerCase().replace(/[^a-z0-9]+/g, '-');
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'mourise-studio-scripts-backup.json';
+      a.download = `script-${safeName}-${draft.version}.json`;
       a.click();
-      showToast('Backup JSON berhasil diunduh');
+      showToast(`Backup script "${draft.title}" berhasil diunduh!`);
+    }
+
+    function triggerImportBackup() {
+      const input = document.getElementById('import-backup-input');
+      if (input) {
+        input.value = '';
+        input.click();
+      }
+    }
+
+    function handleImportBackupFile(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+
+          // 1. Jika file adalah Full Workspace Backup (baru atau versi lama)
+          if (parsed.backupType === 'mourise_full_workspace' && parsed.data?.projects) {
+            const currentViewKeep = state.currentView;
+            state = parsed.data;
+            state.currentView = currentViewKeep;
+            saveStateToStorage();
+            switchView(state.currentView, true);
+            showToast('Seluruh Folder & Script berhasil di-restore dari Backup!');
+          }
+          else if (Array.isArray(parsed.projects)) {
+            const currentViewKeep = state.currentView;
+            state = parsed;
+            state.currentView = currentViewKeep;
+            saveStateToStorage();
+            switchView(state.currentView, true);
+            showToast('Workspace berhasil di-restore dari Backup!');
+          }
+          // 2. Jika file adalah Backup 1 Script (Single Script)
+          else if (parsed.backupType === 'mourise_single_script' && parsed.draft) {
+            let targetProj = state.projects.find(p => p.name.toLowerCase() === (parsed.projectName || '').toLowerCase());
+            if (!targetProj) {
+              targetProj = getActiveProject();
+            }
+            const importedDraft = parsed.draft;
+            importedDraft.id = 'draft_' + Date.now();
+            targetProj.drafts.unshift(importedDraft);
+            state.activeProjectId = targetProj.id;
+            state.activeDraftId = importedDraft.id;
+            saveStateToStorage();
+            switchView(state.currentView, true);
+            showToast(`Script "${importedDraft.title}" berhasil di-import ke "${targetProj.name}"!`);
+          } else {
+            alert('Format file JSON tidak dikenali sebagai backup Mourise Studio.');
+          }
+        } catch (err) {
+          alert('Gagal membaca file backup JSON. Pastikan file tidak rusak.');
+        }
+      };
+      reader.readAsText(file);
     }
 
     function showToast(msg) {
@@ -1599,10 +1939,12 @@
       }
     });
 
+    // Saat pertama kali load atau saat Refresh:
+    // Buka sesuai state.currentView terakhir ('landing' saat pertama kali buka, dan tetap di halaman terakhir saat di-refresh)
     window.addEventListener('DOMContentLoaded', () => {
-      renderEditor();
       setupSheetEvents();
-      lucide.createIcons();
+      const initialView = state.currentView || 'landing';
+      switchView(initialView, true);
     });
   </script>
 </body>
